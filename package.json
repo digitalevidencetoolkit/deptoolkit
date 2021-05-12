@@ -1,0 +1,30 @@
+{
+  "name": "ens-add-supporter",
+  "author": "Ben Ayre <bayre@globalwitness.org>",
+  "contributors": [
+    {
+      "name": "Ben Ayre",
+      "email": "bayre@globalwitness.org"
+    },
+    {
+      "name": "Basile Simon",
+      "email": "bsimon@globalwitness.org"
+    }
+  ],
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "aws-sdk": "^2.905.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "ion-js": "^4.0.0",
+    "jsbi": "^3.1.2",
+    "node-fetch": "^2.6.1"
+  },
+  "scripts": {
+    "start": "node express.js"
+  }
+}
