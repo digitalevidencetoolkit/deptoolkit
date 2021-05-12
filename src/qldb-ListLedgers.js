@@ -1,6 +1,11 @@
 import qldb from 'aws-sdk/clients/qldb.js';
 const { LedgerSummary, ListLedgersRequest, ListLedgersResponse } = qldb;
 
+/**
+ * List all ledgers.
+ * @param qldbClient The QLDB control plane client to use.
+ * @returns Promise which fulfills with a LedgerSummary array.
+ */
 export async function listLedgers(qldbClient) {
   const ledgerSummaries = [];
   let nextToken = null;

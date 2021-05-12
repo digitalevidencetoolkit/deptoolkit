@@ -3,6 +3,11 @@
 
 `express.js` creates a local server that handles HTTP requests.
 
+# Set up a new ledger
+`src/qldb-Constants.js` contains information about our ledger setup.
+
+Run `npm run init` to set up tables, indexes, and populate the ledger with dummy data.
+
 # Local install
 
 ```sh

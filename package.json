@@ -1,6 +1,6 @@
 {
   "name": "ens-add-supporter",
-  "author": "Ben Ayre <bayre@globalwitness.org>",
+  "author": "Basile Simon <basile@digitalevidencetoolkit.org>",
   "contributors": [
     {
       "name": "Ben Ayre",
@@ -14,6 +14,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "amazon-qldb-driver-nodejs": "^2.2.0",
     "aws-sdk": "^2.905.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -25,6 +26,7 @@
     "node-fetch": "^2.6.1"
   },
   "scripts": {
+    "init": "node init.js",
     "start": "node express.js"
   }
 }
