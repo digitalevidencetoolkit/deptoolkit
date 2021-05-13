@@ -16,18 +16,6 @@ app.use(cors());
 app.use(json());
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-// async function addSupporter(body) {
-//   const token = await authenticate();
-//   return await fetch('https://www.e-activist.com/ens/service/supporter', {
-//     method: 'POST',
-//     body,
-//     headers: {
-//       'ens-auth-token': token,
-//       'Content-Type': 'application/json',
-//     },
-//   });
-// }
-
 app.post('/', async function (req, res) {
   const body = JSON.stringify(req.body);
   body

@@ -1,5 +1,4 @@
 import qldb from 'aws-sdk/clients/qldb.js';
-const { LedgerSummary, ListLedgersRequest, ListLedgersResponse } = qldb;
 
 /**
  * List all ledgers.
