@@ -1,9 +1,4 @@
 import express, { Application, Request, Response } from 'express';
-import {
-  QldbDriver,
-  Result,
-  TransactionExecutor,
-} from 'amazon-qldb-driver-nodejs';
 import { config } from 'dotenv';
 import sdk from 'aws-sdk';
 const { QLDB } = sdk;
@@ -11,6 +6,8 @@ const { QLDB } = sdk;
 import { DOC_TABLE_NAME } from './src/qldb-Constants.js';
 import { listLedgers } from './src/qldb-ListLedgers';
 import { insertDocuments } from './src/qldb-InsertDocument';
+
+import { RecordSchema } from './src/schemas';
 
 // set up .env variables as environment variables
 config();
@@ -40,13 +37,15 @@ app.get(
 app.post(
   '/insert-doc',
   async (req: Request, res: Response): Promise<Response> => {
-    const payload = req.body;
-    if (payload.sku && payload.url && payload.title) {
-      const result = await insertDocuments(DOC_TABLE_NAME, payload);
-      return res.status(200).send(result);
-    } else {
-      return res.status(400).send({ message: 'Forbidden operation' });
-    }
+    const payload: { sku: string; title: string; url: string } = req.body;
+    return RecordSchema.validate(payload, { strict: true, stripUnknown: true })
+      .then(() => {
+        const result = insertDocuments(DOC_TABLE_NAME, payload);
+        return res.status(200).send(result);
+      })
+      .catch(e =>
+        res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
+      );
   }
 );
 
