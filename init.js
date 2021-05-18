@@ -19,14 +19,21 @@ import { Documents } from './sample-data/SampleData.js';
 config();
 
 const main = async function () {
-  console.log('Initialising new ledger...');
   try {
     const qldbDriver = getQldbDriver();
     await qldbDriver.executeLambda(async (txn) => {
       Promise.all([
-        createTable(txn, DOC_TABLE_NAME),
-        createIndex(txn, DOC_TABLE_NAME, DOC_INDEX_KEY),
-        insertDocuments(txn, DOC_TABLE_NAME, Documents),
+        // createTable(txn, DOC_TABLE_NAME),
+        // createIndex(txn, DOC_TABLE_NAME, DOC_INDEX_KEY),
+        // insertDocuments(txn, DOC_TABLE_NAME, Documents),
+        await qldbDriver.executeLambda(async (txn) => {
+          const results = (
+            await txn.execute('SELECT * FROM Document')
+          ).getResultList();
+          for (let result of results) {
+            console.log(result); // prints [String: 'TOYENC486FH']
+          }
+        }),
       ]);
     });
   } catch (e) {
