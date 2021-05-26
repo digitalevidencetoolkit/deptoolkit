@@ -1,12 +1,13 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
 import sdk from 'aws-sdk';
-import { uniqueID } from './src/helpers';
+import { uniqueID, pprint } from './src/helpers';
 const { QLDB } = sdk;
 
 import { DOC_TABLE_NAME } from './src/qldb-Constants.js';
 import { listLedgers } from './src/qldb-ListLedgers';
 import { insertDocuments } from './src/qldb-InsertDocument';
+import { listDocuments } from './src/qldb-ListDocuments';
 
 import { RecordSchema } from './src/schemas';
 
@@ -31,7 +32,15 @@ app.get(
   async (req: Request, res: Response): Promise<Response> => {
     const qldbClient = new QLDB();
     const result = await listLedgers(qldbClient);
-    return res.status(200).send(result);
+    return res.status(200).send(pprint(result));
+  }
+);
+
+app.get(
+  '/list-docs',
+  async (req: Request, res: Response): Promise<Response> => {
+    const result = await listDocuments(DOC_TABLE_NAME);
+    return res.status(200).send(pprint(result));
   }
 );
 
