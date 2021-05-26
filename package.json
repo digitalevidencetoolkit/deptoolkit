@@ -22,7 +22,9 @@
     "express": "^4.17.1",
     "ion-js": "^4.0.0",
     "jsbi": "^3.1.2",
-    "node-fetch": "^2.6.1"
+    "nanoid": "^3.1.23",
+    "node-fetch": "^2.6.1",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "init": "node init.js",
