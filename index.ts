@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
 import sdk from 'aws-sdk';
+import { uniqueID } from './src/helpers';
 const { QLDB } = sdk;
 
 import { DOC_TABLE_NAME } from './src/qldb-Constants.js';
@@ -37,10 +38,11 @@ app.get(
 app.post(
   '/insert-doc',
   async (req: Request, res: Response): Promise<Response> => {
-    const payload: { sku: string; title: string; url: string } = req.body;
-    return RecordSchema.validate(payload, { strict: true, stripUnknown: true })
+    const payload: { title: string; url: string } = req.body;
+    const document = { sku: uniqueID(), ...payload };
+    return RecordSchema.validate(document, { strict: true, stripUnknown: true })
       .then(() => {
-        const result = insertDocuments(DOC_TABLE_NAME, payload);
+        const result = insertDocuments(DOC_TABLE_NAME, document);
         return res.status(200).send(result);
       })
       .catch(e =>
