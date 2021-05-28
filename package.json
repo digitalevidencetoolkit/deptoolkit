@@ -27,7 +27,6 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "init": "node init.js",
     "start": "ts-node-dev ./index.ts"
   },
   "devDependencies": {
