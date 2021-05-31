@@ -13,6 +13,7 @@
   ],
   "private": true,
   "dependencies": {
+    "@types/formidable": "^1.2.2",
     "amazon-qldb-driver-nodejs": "^2.2.0",
     "aws-sdk": "^2.905.0",
     "body-parser": "^1.19.0",
@@ -20,6 +21,7 @@
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
+    "formidable": "^1.2.2",
     "ion-js": "^4.0.0",
     "jsbi": "^3.1.2",
     "nanoid": "^3.1.23",
