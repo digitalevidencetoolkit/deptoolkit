@@ -8,8 +8,8 @@ services:
       - "3000"
     ports:
       - "3000:3000"
-    depends_on:
-      - webserver
+    # depends_on:
+    #   - webserver
     networks:
       - app
 

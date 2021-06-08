@@ -2,3 +2,4 @@
 function.zip
 node_modules
 .env
+out/
