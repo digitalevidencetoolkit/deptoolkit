@@ -1,8 +1,7 @@
 import express, { Application, Request, Response } from 'express';
-import * as fs from 'fs';
 import { config } from 'dotenv';
 import sdk from 'aws-sdk';
-import { pprint } from './src/helpers';
+import { pprint, writeScreenshot, hashFromFile } from './src/helpers';
 import formidable, { Fields } from 'formidable';
 const { QLDB } = sdk;
 
@@ -50,26 +49,26 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
   const form = new formidable.IncomingForm();
 
   form.parse(req, (err: any, fields: Fields): void => {
-    // screenshot part
     let base64Data: string;
     //@ts-expect-error
     base64Data = fields.scr.replace(/^data:image\/png;base64,/, '');
     base64Data += base64Data.replace('+', ' ');
-    fs.writeFile(`out/${fields.sku_id}.png`, base64Data, 'base64', err => {
-      if (err) console.log(err);
-    });
 
-    // write-to-ledger part
-    const document = {
-      url: fields.url,
-      title: fields.title,
-      sku: fields.sku_id,
-    };
-    RecordSchema.validate(document, { strict: true, stripUnknown: true })
-      .then(() => insertDocuments(DOC_TABLE_NAME, document))
-      .catch(e =>
-        res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
-      );
+    writeScreenshot(fields.sku_id, base64Data).then(() =>
+      hashFromFile(fields.sku_id).then(hash => {
+        const document = {
+          url: fields.url,
+          title: fields.title,
+          sku: fields.sku_id,
+          hash: hash,
+        };
+        RecordSchema.validate(document, { strict: true, stripUnknown: true })
+          .then(() => insertDocuments(DOC_TABLE_NAME, document))
+          .catch(e =>
+            res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
+          );
+      })
+    );
 
     if (err) {
       console.log(err);
