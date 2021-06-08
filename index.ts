@@ -46,26 +46,11 @@ app.get(
   }
 );
 
-app.post(
-  '/insert-doc',
-  async (req: Request, res: Response): Promise<Response> => {
-    const payload: { title: string; url: string } = req.body;
-    const document = { sku: uniqueID(), ...payload };
-    return RecordSchema.validate(document, { strict: true, stripUnknown: true })
-      .then(() => {
-        const result = insertDocuments(DOC_TABLE_NAME, document);
-        return res.status(200).send(result);
-      })
-      .catch(e =>
-        res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
-      );
-  }
-);
-
 app.post('/form', async (req: Request, res: Response): Promise<Response> => {
   const form = new formidable.IncomingForm();
 
   form.parse(req, (err: any, fields: Fields): void => {
+    // screenshot part
     let base64Data: string;
     //@ts-expect-error
     base64Data = fields.scr.replace(/^data:image\/png;base64,/, '');
@@ -73,6 +58,18 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
     fs.writeFile(`out/${fields.sku_id}.png`, base64Data, 'base64', err => {
       if (err) console.log(err);
     });
+
+    // write-to-ledger part
+    const document = {
+      url: fields.url,
+      title: fields.title,
+      sku: fields.sku_id,
+    };
+    RecordSchema.validate(document, { strict: true, stripUnknown: true })
+      .then(() => insertDocuments(DOC_TABLE_NAME, document))
+      .catch(e =>
+        res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
+      );
 
     if (err) {
       console.log(err);
