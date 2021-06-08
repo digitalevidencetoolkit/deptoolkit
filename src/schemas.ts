@@ -6,6 +6,7 @@ export const RecordSchema = yup
     sku: yup.string().required(),
     url: yup.string().url().required(),
     title: yup.string().required(),
+    hash: yup.string().required(),
   })
   .strict()
   .noUnknown();
