@@ -29,7 +29,10 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "start": "ts-node-dev ./index.ts"
+    "start": "ts-node-dev ./index.ts",
+    "server": "ts-node-dev ./index.ts",
+    "gui": "cd gui && npm run dev",
+    "all": "concurrently \"npm run server\" \"npm run gui\" "
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
