@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import * as fs from 'fs';
 import { config } from 'dotenv';
 import sdk from 'aws-sdk';
-import { uniqueID, pprint } from './src/helpers';
+import { pprint } from './src/helpers';
 import formidable, { Fields } from 'formidable';
 const { QLDB } = sdk;
 
