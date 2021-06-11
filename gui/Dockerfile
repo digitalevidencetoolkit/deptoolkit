@@ -1,13 +1,14 @@
 FROM node:14.16.1-alpine3.12
 
 LABEL version="0.1"
-LABEL description="API handling interactiong with Amazon QLDB"
+LABEL description="GUI from the QLDB ledger"
 
-WORKDIR /app
+WORKDIR /web
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm install --production
 COPY . .
 
-EXPOSE 3000
+EXPOSE 5000
+ENV HOST=0.0.0.0
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
