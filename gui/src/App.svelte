@@ -1,9 +1,15 @@
 <script lang="ts">
+  type LedgerEntry = { title: string; url: string; sku: string; hash?: string };
+
+  let ledgerData: null | LedgerEntry[];
+  $: ledgerData = null;
+
   async function fetchData() {
     const res = await fetch('http://localhost:3000/list-docs');
     const data = await res.json();
 
     if (res.ok) {
+      ledgerData = data._resultList;
       return data._resultList;
     } else {
       throw new Error(data);
@@ -37,10 +43,10 @@
 <main>
   {#await fetchData()}
     <p>...waiting</p>
-  {:then ledgerData}
-    {#each ledgerData as item, i}
+  {:then fulfilled}
+    {#each ledgerData as item}
       <section>
-        <h4>{i} • {item.title}</h4>
+        <h4>📦 • {item.title}</h4>
         <pre>🔗 {item.url}</pre>
         <pre>🔖 {item.sku}</pre>
         <pre>⚙️ {item.hash}</pre>
