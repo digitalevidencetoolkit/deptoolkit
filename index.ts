@@ -1,7 +1,12 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
 import sdk from 'aws-sdk';
-import { pprint, writeScreenshot, hashFromFile } from './src/helpers';
+import {
+  pprint,
+  writeScreenshot,
+  makeThumbnail,
+  hashFromFile,
+} from './src/helpers';
 import formidable, { Fields } from 'formidable';
 const { QLDB } = sdk;
 
@@ -54,21 +59,27 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
     base64Data = fields.scr.replace(/^data:image\/png;base64,/, '');
     base64Data += base64Data.replace('+', ' ');
 
-    writeScreenshot(fields.sku_id, base64Data).then(() =>
-      hashFromFile(fields.sku_id).then(hash => {
-        const document = {
-          url: fields.url,
-          title: fields.title,
-          sku: fields.sku_id,
-          hash: hash,
-        };
-        RecordSchema.validate(document, { strict: true, stripUnknown: true })
-          .then(() => insertDocuments(DOC_TABLE_NAME, document))
-          .catch(e =>
-            res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
-          );
-      })
-    );
+    writeScreenshot(fields.sku_id, base64Data)
+      .then(() =>
+        hashFromFile(fields.sku_id).then(hash => {
+          const document = {
+            url: fields.url,
+            title: fields.title,
+            sku: fields.sku_id,
+            hash: hash,
+          };
+          RecordSchema.validate(document, { strict: true, stripUnknown: true })
+            .then(() => insertDocuments(DOC_TABLE_NAME, document))
+            .catch(e =>
+              res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
+            );
+        })
+      )
+      .then(() =>
+        makeThumbnail(fields.sku_id).then(data =>
+          writeScreenshot(`${fields.sku_id}_thumb`, data.toString('base64'))
+        )
+      );
 
     if (err) {
       console.log(err);
