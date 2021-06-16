@@ -3,7 +3,7 @@
 
   export let entry: LedgerEntry;
   const pathToThumbnail = (entry: LedgerEntry): string =>
-    `out/${entry.sku}_thumb.png`;
+    `http://localhost:3000/file/${entry.sku}_thumb.png`;
 </script>
 
 <style type="text/scss">
@@ -28,8 +28,8 @@
 
     .thumbnail,
     img {
-      width: 320px;
-      height: 230px;
+      width: 300px;
+      height: 200px;
     }
 
     .metadata {

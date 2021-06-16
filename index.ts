@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
+import { join } from 'path';
 import sdk from 'aws-sdk';
 import {
   pprint,
@@ -31,6 +32,15 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).send({
     message: 'Hello World!',
   });
+});
+
+app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
+  const { sku } = req.params;
+  const options = {
+    root: join(__dirname, './out'),
+    dotfiles: 'deny',
+  };
+  res.sendFile(`${sku}`, options);
 });
 
 app.get(
