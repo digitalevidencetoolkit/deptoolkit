@@ -4,13 +4,10 @@ LABEL version="0.1"
 LABEL description="API handling interactiong with Amazon QLDB"
 
 WORKDIR /app
-
 COPY ["package.json", "package-lock.json", "./"]
-
-RUN npm install --production
-
+RUN npm install
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
