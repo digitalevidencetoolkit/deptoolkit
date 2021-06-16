@@ -5,7 +5,8 @@ LABEL description="GUI from the QLDB ledger"
 
 WORKDIR /web
 COPY ["package.json", "package-lock.json", "./"]
-RUN npm install --production
+RUN npm install
+RUN npm rebuild node-sass
 COPY . .
 
 EXPOSE 5000

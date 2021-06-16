@@ -12,6 +12,8 @@ services:
       - "3000:3000"
     networks:
       - app
+    volumes:
+      - "./out:/app/out"
 
   gui:
     build:
@@ -23,6 +25,8 @@ services:
       - "5000:5000"
     networks:
       - app
+    depends_on:
+      - endpoint
 
 networks:
   app:
