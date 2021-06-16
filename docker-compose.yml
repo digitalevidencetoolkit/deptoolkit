@@ -3,27 +3,30 @@ version: '3'
 services:
 
   endpoint:
-    build: ./
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     expose:
       - "3000"
     ports:
       - "3000:3000"
-    depends_on:
-      - webserver
     networks:
       - app
+    volumes:
+      - "./out:/app/out"
 
-  # webserver:
-  #   image: nginx:mainline-alpine
-  #   restart: unless-stopped
-  #   ports:
-  #     - "443:443"
-  #   volumes:
-  #     - ./nginx-conf:/etc/nginx/conf.d
-  #     - /etc/letsencrypt:/etc/letsencrypt
-  #   networks:
-  #     - app
-  #   command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  gui:
+    build:
+      context: gui/
+      dockerfile: Dockerfile
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    networks:
+      - app
+    depends_on:
+      - endpoint
 
 networks:
   app:
