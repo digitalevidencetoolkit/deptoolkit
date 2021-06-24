@@ -1,16 +1,13 @@
 {
-  "name": "ens-add-supporter",
+  "name": "digitalevidencetoolkit-node-api",
   "author": "Basile Simon <basile@digitalevidencetoolkit.org>",
   "contributors": [
     {
-      "name": "Ben Ayre",
-      "email": "bayre@globalwitness.org"
-    },
-    {
-      "name": "Basile Simon",
-      "email": "bsimon@globalwitness.org"
+      "name": "Niko Para",
+      "email": "nicholas.para@dw.com"
     }
   ],
+  "version": "2.0",
   "private": true,
   "dependencies": {
     "@types/formidable": "^1.2.2",
