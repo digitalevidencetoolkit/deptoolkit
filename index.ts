@@ -1,26 +1,20 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
 import { join } from 'path';
-import * as Ledger from './ledger';
-import sdk from 'aws-sdk';
-import sharp, { Sharp } from 'sharp';
-import {
-  pprint,
-  writeScreenshot,
-  makeThumbnail,
-  hashFromFile,
-} from './src/helpers';
+import sharp from 'sharp';
 import formidable, { Fields } from 'formidable';
+
+import * as Ledger from './ledger';
 import * as Record from './types/Record';
 import * as Store from './src/store';
-const { QLDB } = sdk;
 
-import { DOC_TABLE_NAME, LEDGER_NAME } from './src/qldb-Constants';
+import sdk from 'aws-sdk';
+const { QLDB } = sdk;
+import { DOC_TABLE_NAME } from './src/qldb-Constants';
 import { listLedgers } from './src/qldb-ListLedgers';
-// import { insertDocuments } from './src/qldb-InsertDocument';
 import { listDocuments } from './src/qldb-ListDocuments';
 
-// import { RecordSchema } from './src/schemas';
+import { pprint } from './src/helpers';
 
 // set up .env variables as environment variables
 config();
