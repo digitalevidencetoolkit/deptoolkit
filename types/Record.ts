@@ -27,10 +27,10 @@ export const toLedger = (r: Record) => ({
   ...r.data,
   ...r.annotations,
   /**
-   *     [{typ: 'a', hash: 'aaa'}, {typ: 'b', hash: 'bbb'}]
+   *     [{kind: 'a', hash: 'aaa'}, {kind: 'b', hash: 'bbb'}]
    *     --> { a: 'aaa', b: 'bbb' }
    */
-  ...r.bundle.reduce((a, { typ, hash }) => ({ ...a, [typ]: hash }), {}),
+  ...r.bundle.reduce((a, { kind, hash }) => ({ ...a, [kind]: hash }), {}),
 });
 
 /**
@@ -45,8 +45,11 @@ export const fromLedger = (o: ArbitraryObject): Record => {
       data: { url: o?.url, title: o?.title },
       annotations: { description: o?.description },
       bundle: [
-        { typ: 'screenshot' as const, hash: o?.screenshot },
-        { typ: 'screenshot_thumbnail' as const, hash: o?.screenshot_thumbnail },
+        { kind: 'screenshot' as const, hash: o?.screenshot },
+        {
+          kind: 'screenshot_thumbnail' as const,
+          hash: o?.screenshot_thumbnail,
+        },
       ],
     };
   }
@@ -58,8 +61,8 @@ export const fromLedger = (o: ArbitraryObject): Record => {
       data: { url: o.url, title: o.title },
       annotations: { description: '' },
       bundle: [
-        { typ: 'screenshot', hash: o.hash },
-        { typ: 'screenshot_thumbnail', hash: `${o.sku}_thumb` },
+        { kind: 'screenshot', hash: o.hash },
+        { kind: 'screenshot_thumbnail', hash: `${o.sku}_thumb` },
       ],
     };
   }
@@ -75,6 +78,6 @@ export const toFrontend = (r: Record) => ({
   title: r.data.title,
   sku: id(r),
   url: r.data.url,
-  thumb: r.bundle.find(f => f.typ === 'screenshot_thumbnail')?.hash,
-  hash: r.bundle.find(f => f.typ === 'screenshot')?.hash,
+  thumb: r.bundle.find(f => f.kind === 'screenshot_thumbnail')?.hash,
+  hash: r.bundle.find(f => f.kind === 'screenshot')?.hash,
 });

@@ -79,9 +79,9 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       .toBuffer();
 
     const { url, title } = fields;
-    const file = { typ: 'screenshot' as const, data: screenshotData };
+    const file = { kind: 'screenshot' as const, data: screenshotData };
     const thumbnail = {
-      typ: 'screenshot_thumbnail' as const,
+      kind: 'screenshot_thumbnail' as const,
       data: thumbnailData,
     };
     Store.newBundle([file, thumbnail]).then(b => {
