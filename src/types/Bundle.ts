@@ -1,4 +1,4 @@
-import { makeHash } from '../src/helpers';
+import { makeHash } from '../helpers';
 import * as File from './File';
 
 /**
