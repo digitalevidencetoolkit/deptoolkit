@@ -2,8 +2,9 @@
   import type { LedgerEntry } from './types';
 
   export let entry: LedgerEntry;
+  console.log(entry);
   const pathToThumbnail = (entry: LedgerEntry): string =>
-    `http://localhost:3000/file/${entry.sku}_thumb.png`;
+    `http://localhost:3000/file/${entry}.png`;
 </script>
 
 <style type="text/scss">
@@ -41,7 +42,7 @@
 <section>
   <div class="thumbnail">
     {#if entry.hash}
-      <img src={pathToThumbnail(entry)} alt="" />
+      <img src={pathToThumbnail(entry.thumb)} alt="" />
     {/if}
   </div>
   <div class="metadata">

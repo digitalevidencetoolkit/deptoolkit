@@ -44,6 +44,12 @@ export const makeThumbnail = (sku: string | string[]): Promise<Buffer> =>
     .resize(320, 240, { fit: 'inside' })
     .toBuffer();
 
+export const makeHash = (str: string | Buffer): string => {
+  let hash = createHash('sha256');
+  hash.update(str);
+  return hash.digest('hex');
+};
+
 /**
  * Promise to compute the SHA256 of a local file in the `out/` directory.
  * @param sku string
@@ -52,9 +58,7 @@ export const makeThumbnail = (sku: string | string[]): Promise<Buffer> =>
 export const hashFromFile = (sku: string | string[]): Promise<string> =>
   new Promise((resolve, reject) =>
     fs.readFile(makePathToScreenshotsDir(sku), (err, data) => {
-      let hash = createHash('sha256');
-      hash.update(data);
-      const hex = hash.digest('hex');
+      const hex = makeHash(data);
       if (err) reject(err);
       else resolve(hex);
     })
