@@ -47,33 +47,17 @@ export const toLedger = (r: Record) => ({
  * @returns a Record
  */
 export const fromLedger = (o: ArbitraryObject): Record => {
-  // if we are using the new data type, then:
-  if (o.id) {
-    return {
-      data: { url: o?.url, title: o?.title },
-      annotations: { description: o?.description },
-      bundle: [
-        { kind: 'screenshot' as const, hash: o?.screenshot },
-        {
-          kind: 'screenshot_thumbnail' as const,
-          hash: o?.screenshot_thumbnail,
-        },
-      ],
-    };
-  }
-  // backwards compatibility with v1.0 structure of ledger
-  // (which is differentiated by its use of `o.sku` as mean of ID)
-  // @TODO: delete when not in use any more
-  if (o.sku) {
-    return {
-      data: { url: o.url, title: o.title },
-      annotations: { description: '' },
-      bundle: [
-        { kind: 'screenshot', hash: o.hash },
-        { kind: 'screenshot_thumbnail', hash: `${o.sku}_thumb` },
-      ],
-    };
-  }
+  return {
+    data: { url: o?.url, title: o?.title },
+    annotations: { description: o?.description },
+    bundle: [
+      { kind: 'screenshot' as const, hash: o?.screenshot },
+      {
+        kind: 'screenshot_thumbnail' as const,
+        hash: o?.screenshot_thumbnail,
+      },
+    ],
+  };
   console.warn(` got this junk from the ledger: ${o}`);
 };
 
