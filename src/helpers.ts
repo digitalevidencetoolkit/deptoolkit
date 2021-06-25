@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import sharp, { Sharp } from 'sharp';
 import { createHash } from 'crypto';
 
 /**

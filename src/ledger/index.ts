@@ -1,7 +1,5 @@
 import * as Record from '../types/Record';
-import { DOC_TABLE_NAME } from '../qldb-Constants';
-import { listDocuments } from '../qldb-ListDocuments';
-import { insertDocuments } from '../qldb-InsertDocument';
+import * as QLDB from '../qldb';
 
 import { Result } from 'amazon-qldb-driver-nodejs';
 
@@ -11,10 +9,12 @@ const validate = (r: Record.Record): Promise<Record.Record> =>
 export const insertDoc = (r: Record.Record): Promise<Result> =>
   validate(r)
     .then(Record.toLedger)
-    .then(dbItem => insertDocuments(DOC_TABLE_NAME, dbItem));
+    .then(dbItem =>
+      QLDB.insertDocuments(QLDB.Constants.doc_table_name, dbItem)
+    );
 
 export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
-  const list: Result = await listDocuments(DOC_TABLE_NAME);
+  const list: Result = await QLDB.listDocuments(QLDB.Constants.doc_table_name);
   const result = list.getResultList();
   return result
     .map(e => Record.fromLedger(e))
