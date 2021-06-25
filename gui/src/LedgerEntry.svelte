@@ -1,10 +1,8 @@
 <script lang="ts">
   import type { LedgerEntry } from './types';
-
   export let entry: LedgerEntry;
-  console.log(entry);
-  const pathToThumbnail = (entry: LedgerEntry): string =>
-    `http://localhost:3000/file/${entry}.png`;
+  const pathToThumbnail = (path: string): string =>
+    `http://localhost:3000/file/${path}.png`;
 </script>
 
 <style type="text/scss">
