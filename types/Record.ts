@@ -8,6 +8,14 @@ export type Record = {
   data: Data.Data;
 };
 
+export type FrontEndRecord = {
+  title: string;
+  sku: string;
+  url: string;
+  thumb?: string;
+  hash?: string;
+};
+
 type ArbitraryObject = { [key: string]: any };
 
 /**
@@ -74,7 +82,7 @@ export const fromLedger = (o: ArbitraryObject): Record => {
  * @param r
  * @returns
  */
-export const toFrontend = (r: Record) => ({
+export const toFrontend = (r: Record): FrontEndRecord => ({
   title: r.data.title,
   sku: id(r),
   url: r.data.url,

@@ -5,14 +5,7 @@ import sharp from 'sharp';
 import formidable, { Fields } from 'formidable';
 
 import * as Ledger from './ledger';
-import * as Record from './types/Record';
 import * as Store from './src/store';
-
-import sdk from 'aws-sdk';
-const { QLDB } = sdk;
-import { DOC_TABLE_NAME } from './src/qldb-Constants';
-import { listLedgers } from './src/qldb-ListLedgers';
-import { listDocuments } from './src/qldb-ListDocuments';
 
 import { pprint } from './src/helpers';
 
@@ -42,26 +35,10 @@ app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
 });
 
 app.get(
-  '/list-ledgers',
-  async (req: Request, res: Response): Promise<Response> => {
-    const qldbClient = new QLDB();
-    const result = await listLedgers(qldbClient);
-    return res.status(200).send(pprint(result));
-  }
-);
-
-app.get(
   '/list-docs',
   async (req: Request, res: Response): Promise<Response> => {
-    const result = await listDocuments(DOC_TABLE_NAME);
-    return res.status(200).send(
-      pprint(
-        result
-          .getResultList()
-          .map(e => Record.fromLedger(e))
-          .map(e => Record.toFrontend(e))
-      )
-    );
+    const result = await Ledger.listDocs();
+    return res.status(200).send(pprint(result));
   }
 );
 
@@ -93,7 +70,7 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       //   .catch(e =>
       //     res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
       //   );
-      Ledger.insert(document);
+      Ledger.insertDoc(document);
     });
 
     if (err) {
