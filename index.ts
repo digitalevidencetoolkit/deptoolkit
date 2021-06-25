@@ -4,7 +4,7 @@ import { join } from 'path';
 import sharp from 'sharp';
 import formidable, { Fields } from 'formidable';
 
-import * as Ledger from './ledger';
+import * as Ledger from './src/ledger';
 import * as Store from './src/store';
 
 import { pprint } from './src/helpers';

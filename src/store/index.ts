@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { makeHash } from '../helpers';
-import * as File from '../../types/File';
-import * as Bundle from '../../types/Bundle';
+import * as File from '../types/File';
+import * as Bundle from '../types/Bundle';
 // import * as s3storage from s3storage
 
 const config = {

@@ -1,7 +1,7 @@
 import * as Record from '../types/Record';
-import { DOC_TABLE_NAME } from '../src/qldb-Constants';
-import { listDocuments } from '../src/qldb-ListDocuments';
-import { insertDocuments } from '../src/qldb-InsertDocument';
+import { DOC_TABLE_NAME } from '../qldb-Constants';
+import { listDocuments } from '../qldb-ListDocuments';
+import { insertDocuments } from '../qldb-InsertDocument';
 
 import { Result } from 'amazon-qldb-driver-nodejs';
 

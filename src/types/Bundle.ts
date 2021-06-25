@@ -1,9 +1,9 @@
-import { makeHash } from '../src/helpers';
+import { makeHash } from '../helpers';
 import * as File from './File';
 
 /**
  * A bundle is a list of files, which belong to a discrete
- * number of "types": screenshots, thumbnails, one-file downloads...
+ * number of "kinds": screenshots, thumbnails, one-file downloads...
  */
 export type Bundle = File.File[];
 
