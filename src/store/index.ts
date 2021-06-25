@@ -15,7 +15,7 @@ const config = {
 
 /**
  * Promise to write a buffer to a path
- * @param b a buffer 
+ * @param b a buffer
  * @param path string
  * @returns A resolved promise
  */
@@ -40,7 +40,7 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
   const name = makeHash(a.data);
   const path = `${dir}/${name}.png`;
   await writeToDisk(a.data, path);
-  return { typ: a.typ, hash: name };
+  return { kind: a.kind, hash: name };
 };
 
 /**
@@ -52,7 +52,7 @@ export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
   return Promise.all(b.map(writeOne));
 };
 
-/** 
+/**
  *  if cfg.s3
  *    ...
  *  if cfg.local
