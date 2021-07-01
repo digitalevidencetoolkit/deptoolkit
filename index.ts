@@ -67,10 +67,10 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
         annotations: { description: '' },
         data: { url: url as string, title: title as string },
       };
+      Ledger.insertDoc(document);
       //   .catch(e =>
       //     res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
       //   );
-      Ledger.insertDoc(document);
     });
 
     if (err) {

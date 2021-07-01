@@ -1,3 +1,4 @@
+import * as yup from 'yup';
 import * as Annotations from './Annotations';
 import * as Data from './Data';
 import * as Bundle from './Bundle';
@@ -15,6 +16,20 @@ export type FrontEndRecord = {
   thumb?: string;
   hash?: string;
 };
+
+const DocSchema = yup
+  .object()
+  .shape({
+    bundle: yup
+      .array()
+      .of(yup.object().shape({ kind: yup.string(), hash: yup.string() })),
+    annotations: yup.object().shape({ description: yup.string() }),
+    data: yup.object().shape({ title: yup.string(), url: yup.string() }),
+  })
+  .strict()
+  .noUnknown();
+
+export const validate = (r: Record): Promise<any> => DocSchema.validate(r);
 
 type ArbitraryObject = { [key: string]: any };
 
