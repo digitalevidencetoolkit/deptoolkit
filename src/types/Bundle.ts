@@ -14,9 +14,19 @@ export type Bundle = File.File[];
 export type newBundle = Array<File.newFile>;
 
 /**
+ * Ensure the bundle (a list of files) is _always_ sorted
+ * the same way to preserve identity.
+ * @param b a Bundle
+ * @returns a Bundle, sorted alphabetically by its ID
+ */
+const sortedBundle = (b: Bundle): Bundle =>
+  b.sort((a, b) => File.id(a).localeCompare(File.id(b)));
+
+/**
  * A bundle's ID is the sum of its composing parts' IDs (or hashes)
  * @param b a Bundle
  * @returns a string
  */
 // @TODO: confirm this is accurate
-export const id = (b: Bundle): string => makeHash(b.map(File.id).join(''));
+export const id = (b: Bundle): string =>
+  makeHash(sortedBundle(b).map(File.id).join(''));
