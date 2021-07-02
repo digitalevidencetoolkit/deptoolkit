@@ -7,8 +7,10 @@ import formidable, { Fields } from 'formidable';
 
 import * as Ledger from './src/ledger';
 import * as Store from './src/store';
+import * as Bundle from './src/types/Bundle';
+import * as Record from './src/types/Record';
 
-import { pprint } from './src/helpers';
+import { pprint, cleanupBase64 } from './src/helpers';
 
 // set up .env variables as environment variables
 config();
@@ -55,42 +57,54 @@ app.get(
 );
 
 app.post('/form', async (req: Request, res: Response): Promise<Response> => {
-  const form = new formidable.IncomingForm();
+  // wrap callback based formidable code in modern promises
+  return new Promise((resolve, reject) => {
+    const form = new formidable.IncomingForm();
+    form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
+      if (err) {
+        resolve(res.status(400).send(`${err.name}: ${err.message}`)); // FIXME: don't expose js errors to public
+      }
+      const { url, title, scr } = fields;
+      const base64Data = cleanupBase64(scr as string); // FIXME: don't use 'as string', instead make sure we have string instead of string[]
+      const screenshotData = new Buffer(base64Data, 'base64');
+      const thumbnailData = await sharp(screenshotData)
+        .resize(320, 240, { fit: 'inside' })
+        .toBuffer();
 
-  form.parse(req, async (err: any, fields: Fields): Promise<void> => {
-    let base64Data: string;
-    //@ts-expect-error
-    base64Data = fields.scr.replace(/^data:image\/png;base64,/, '');
-    base64Data += base64Data.replace('+', ' ');
-    const screenshotData = new Buffer(base64Data, 'base64');
-    const thumbnailData = await sharp(screenshotData)
-      .resize(320, 240, { fit: 'inside' })
-      .toBuffer();
-
-    const { url, title } = fields;
-    const file = { kind: 'screenshot' as const, data: screenshotData };
-    const thumbnail = {
-      kind: 'screenshot_thumbnail' as const,
-      data: thumbnailData,
-    };
-    Store.newBundle([file, thumbnail]).then(b => {
-      const document = {
-        bundle: b,
-        annotations: { description: '' },
-        data: { url: url as string, title: title as string },
+      const screenshot = { kind: 'screenshot' as const, data: screenshotData };
+      const thumbnail = {
+        kind: 'screenshot_thumbnail' as const,
+        data: thumbnailData,
       };
-      Ledger.insertDoc(document);
-      //   .catch(e =>
-      //     res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
-      //   );
-    });
 
-    if (err) {
-      console.log(err);
-    }
-  });
-  return res.status(200).send('Received POST on /form');
-});
+      await Store
+        // create and store a bundle from the form data
+        .newBundle([screenshot, thumbnail])
+        // convert this Bundle into a Record, using the rest of the form data
+        .then((bundle: Bundle.Bundle) => {
+          const record = {
+            bundle,
+            annotations: { description: '' },
+            data: { url: url as string, title: title as string },
+          };
+          return record;
+        })
+        // insert this document into the ledger
+        .then((r: Record.Record) => {
+           return Ledger.insertDoc(r)
+        })
+        // if everything worked well, resolve the promise
+        .then(_ => {
+          console.log(`ledger inserted correctly`);
+          resolve(res.status(200).send('Received POST on /form'))
+        })
+        // if something failed, resolve the promise with a failure message
+        .catch(e => {
+          resolve(res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`))
+        });
+        })
+    });
+  })
 
 try {
   app.listen(port, (): void => {

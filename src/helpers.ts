@@ -11,3 +11,16 @@ export const makeHash = (str: string | Buffer): string => {
   hash.update(str);
   return hash.digest('hex');
 };
+
+
+/**
+ * change the format of a base64 string to a type we can work with
+ * @param s the string, as given by the formidable library, or something else
+ * @returns a string, without the data:image things, and also without the + character
+ */
+export const cleanupBase64 = (s: string): string => {
+  let base64Data: string;
+  base64Data = s.replace(/^data:image\/png;base64,/, '');
+  base64Data += base64Data.replace('+', ' ');
+  return base64Data;
+}
