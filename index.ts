@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
 import { join } from 'path';
+import cors from 'cors';
 import sharp from 'sharp';
 import formidable, { Fields } from 'formidable';
 
@@ -14,6 +15,8 @@ config();
 
 const port = 3000;
 const app: Application = express();
+
+app.use(cors());
 
 // Body parsing Middleware
 app.use(express.json());
