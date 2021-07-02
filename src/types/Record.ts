@@ -29,7 +29,7 @@ const DocSchema = yup
   .strict()
   .noUnknown();
 
-export const validate = (r: Record.Record): Promise<any> => DocSchema.validate(r);
+export const validate = (r: Record): Promise<any> => DocSchema.validate(r);
 
 type ArbitraryObject = { [key: string]: any };
 
