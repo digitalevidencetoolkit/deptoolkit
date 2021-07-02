@@ -13,7 +13,7 @@
     const data = await res.json();
 
     if (res.ok) {
-      ledgerData = data._resultList;
+      ledgerData = data;
     } else {
       throw new Error(data);
     }

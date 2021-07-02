@@ -1,28 +1,22 @@
 import express, { Application, Request, Response } from 'express';
 import { config } from 'dotenv';
 import { join } from 'path';
-import sdk from 'aws-sdk';
-import {
-  pprint,
-  writeScreenshot,
-  makeThumbnail,
-  hashFromFile,
-} from './src/helpers';
+import cors from 'cors';
+import sharp from 'sharp';
 import formidable, { Fields } from 'formidable';
-const { QLDB } = sdk;
 
-import { DOC_TABLE_NAME } from './src/qldb-Constants';
-import { listLedgers } from './src/qldb-ListLedgers';
-import { insertDocuments } from './src/qldb-InsertDocument';
-import { listDocuments } from './src/qldb-ListDocuments';
+import * as Ledger from './src/ledger';
+import * as Store from './src/store';
 
-import { RecordSchema } from './src/schemas';
+import { pprint } from './src/helpers';
 
 // set up .env variables as environment variables
 config();
 
 const port = 3000;
 const app: Application = express();
+
+app.use(cors());
 
 // Body parsing Middleware
 app.use(express.json());
@@ -44,10 +38,10 @@ app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
 });
 
 app.get(
-  '/list-ledgers',
+  '/history/:sku',
   async (req: Request, res: Response): Promise<Response> => {
-    const qldbClient = new QLDB();
-    const result = await listLedgers(qldbClient);
+    const { sku } = req.params;
+    const result = await Ledger.listDocHistory(sku);
     return res.status(200).send(pprint(result));
   }
 );
@@ -55,7 +49,7 @@ app.get(
 app.get(
   '/list-docs',
   async (req: Request, res: Response): Promise<Response> => {
-    const result = await listDocuments(DOC_TABLE_NAME);
+    const result = await Ledger.listDocs();
     return res.status(200).send(pprint(result));
   }
 );
@@ -63,33 +57,33 @@ app.get(
 app.post('/form', async (req: Request, res: Response): Promise<Response> => {
   const form = new formidable.IncomingForm();
 
-  form.parse(req, (err: any, fields: Fields): void => {
+  form.parse(req, async (err: any, fields: Fields): Promise<void> => {
     let base64Data: string;
     //@ts-expect-error
     base64Data = fields.scr.replace(/^data:image\/png;base64,/, '');
     base64Data += base64Data.replace('+', ' ');
+    const screenshotData = new Buffer(base64Data, 'base64');
+    const thumbnailData = await sharp(screenshotData)
+      .resize(320, 240, { fit: 'inside' })
+      .toBuffer();
 
-    writeScreenshot(fields.sku_id, base64Data)
-      .then(() =>
-        hashFromFile(fields.sku_id).then(hash => {
-          const document = {
-            url: fields.url,
-            title: fields.title,
-            sku: fields.sku_id,
-            hash: hash,
-          };
-          RecordSchema.validate(document, { strict: true, stripUnknown: true })
-            .then(() => insertDocuments(DOC_TABLE_NAME, document))
-            .catch(e =>
-              res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
-            );
-        })
-      )
-      .then(() =>
-        makeThumbnail(fields.sku_id).then(data =>
-          writeScreenshot(`${fields.sku_id}_thumb`, data.toString('base64'))
-        )
-      );
+    const { url, title } = fields;
+    const file = { kind: 'screenshot' as const, data: screenshotData };
+    const thumbnail = {
+      kind: 'screenshot_thumbnail' as const,
+      data: thumbnailData,
+    };
+    Store.newBundle([file, thumbnail]).then(b => {
+      const document = {
+        bundle: b,
+        annotations: { description: '' },
+        data: { url: url as string, title: title as string },
+      };
+      Ledger.insertDoc(document);
+      //   .catch(e =>
+      //     res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
+      //   );
+    });
 
     if (err) {
       console.log(err);
