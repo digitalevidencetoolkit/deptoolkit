@@ -6,7 +6,6 @@ import formidable, { Fields } from 'formidable';
 
 import * as Ledger from './src/ledger';
 import * as Store from './src/store';
-import { queryHistoryOfDocument } from './src/qldb-QueryHistoryOfDocument';
 
 import { pprint } from './src/helpers';
 
@@ -39,7 +38,7 @@ app.get(
   '/history/:sku',
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
-    const result = await queryHistoryOfDocument(DOC_TABLE_NAME, sku);
+    const result = await Ledger.listDocHistory(sku);
     return res.status(200).send(pprint(result));
   }
 );
