@@ -1,5 +1,6 @@
 import * as Record from '../types/Record';
 import * as QLDB from '../qldb';
+import { dom } from 'ion-js';
 
 import { Result } from 'amazon-qldb-driver-nodejs';
 
@@ -16,3 +17,9 @@ export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
     .map(e => Record.fromLedger(e))
     .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
 };
+
+export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {
+  const list = await QLDB.queryHistoryOfDocument(sku);
+  const result = list.getResultList();
+  return result;
+}

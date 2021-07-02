@@ -38,6 +38,15 @@ app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
 });
 
 app.get(
+  '/history/:sku',
+  async (req: Request, res: Response): Promise<Response> => {
+    const { sku } = req.params;
+    const result = await Ledger.listDocHistory(sku);
+    return res.status(200).send(pprint(result));
+  }
+);
+
+app.get(
   '/list-docs',
   async (req: Request, res: Response): Promise<Response> => {
     const result = await Ledger.listDocs();
