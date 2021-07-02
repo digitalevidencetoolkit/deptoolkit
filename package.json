@@ -4,10 +4,10 @@
   "contributors": [
     {
       "name": "Niko Para",
-      "email": "nicholas.para@dw.com"
+      "email": "niko@niko.io"
     }
   ],
-  "version": "2.0.1",
+  "version": "2.1.0",
   "private": true,
   "dependencies": {
     "@types/formidable": "^1.2.2",
