@@ -91,20 +91,22 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
         })
         // insert this document into the ledger
         .then((r: Record.Record) => {
-           return Ledger.insertDoc(r)
+          return Ledger.insertDoc(r);
         })
         // if everything worked well, resolve the promise
         .then(_ => {
           console.log(`ledger inserted correctly`);
-          resolve(res.status(200).send('Received POST on /form'))
+          resolve(res.status(200).send('Received POST on /form'));
         })
         // if something failed, resolve the promise with a failure message
         .catch(e => {
-          resolve(res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`))
+          resolve(
+            res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)
+          );
         });
-        })
     });
-  })
+  });
+});
 
 try {
   app.listen(port, (): void => {
