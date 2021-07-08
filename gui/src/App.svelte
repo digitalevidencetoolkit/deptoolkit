@@ -28,9 +28,13 @@
         history: History[];
       }[];
   $: historyData = [];
-  $: console.log(historyData);
 
-  async function fetchHistory(id: string): Promise<History[]> {
+  /**
+   * Handle the convoluted querying of a record's history
+   * @param id string - the record's ID
+   * @returns a promise of a history (an array of revisions)
+   */
+  async function fetchItemHistory(id: string): Promise<History[]> {
     const res = await fetch(`http://localhost:3000/history/${id}`);
     const data = await res.json();
 
@@ -40,14 +44,21 @@
     // @TODO: error handling!
   }
 
+  /**
+   * Show a record's history in the UI: fetch this history
+   * and add it to the `historyData` store
+   * @param entry object - the record as represented in QLDB
+   */
   async function showHistory(entry: LedgerEntry) {
-    const itemHistoryData = await fetchHistory(entry.sku);
-    //@ts-ignore
+    const itemHistoryData = await fetchItemHistory(entry.sku);
     historyData = [
       ...historyData,
       { sku: entry.sku, history: itemHistoryData },
     ];
   }
+
+  const accessOriginalTxDate = (item: LedgerEntry): string =>
+    historyData.find(e => e.sku === item.sku).history[0].metadata.txTime;
 </script>
 
 <style>
@@ -69,14 +80,24 @@
     <p>...waiting</p>
   {:then fulfilled}
     {#each ledgerData as item}
-      <LedgerEntryComponent entry={item} />
-      <div>
-        <h4>Actions:</h4>
-        <button on:click={() => showHistory(item)}>🕰 Show history</button>
-        {#if historyData.find(e => e.sku === item.sku)}
-          {historyData.find(e => e.sku === item.sku).history[0].metadata.txTime}
-        {/if}
-      </div>
+      {#if historyData.map(e => e.sku).includes(item.sku)}
+        <LedgerEntryComponent
+          entry={item}
+          originalTxDate={new Date(accessOriginalTxDate(item))}
+        />
+        <div>
+          <button disabled on:click={() => showHistory(item)} href="#"
+            >🕰 Show history</button
+          >
+        </div>
+      {:else}
+        <LedgerEntryComponent entry={item} originalTxDate={undefined} />
+        <div>
+          <button on:click={() => showHistory(item)} href="#"
+            >🕰 Show history</button
+          >
+        </div>
+      {/if}
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>

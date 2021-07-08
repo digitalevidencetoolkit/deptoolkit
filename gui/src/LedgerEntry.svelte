@@ -1,6 +1,14 @@
 <script lang="ts">
   import type { LedgerEntry } from './types';
   export let entry: LedgerEntry;
+  export let originalTxDate: Date | undefined;
+  let formattedOriginalTxDate: string | undefined = undefined;
+  let formattedOriginalTxTime: string | undefined = undefined;
+  $: if (originalTxDate) {
+    formattedOriginalTxDate = originalTxDate.toDateString();
+    formattedOriginalTxTime = originalTxDate.toLocaleTimeString();
+  }
+
   const pathToThumbnail = (path: string): string =>
     `http://localhost:3000/file/${path}.png`;
 </script>
@@ -50,6 +58,9 @@
     <pre>📷️ {entry.screenshot_hash}</pre>
     {#if entry.one_file_hash}
       <pre>📁 {entry.one_file_hash}</pre>
+    {/if}
+    {#if formattedOriginalTxDate}
+      <pre>🕰️ Added on {formattedOriginalTxDate}, {formattedOriginalTxTime}</pre>
     {/if}
   </div>
 </section>
