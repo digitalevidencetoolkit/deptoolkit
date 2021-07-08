@@ -1,14 +1,12 @@
 <script lang="ts">
-  import type { LedgerEntry } from './types';
+  import * as Ledger from './index';
+  import type { LedgerEntry, EntryHistory } from './index';
   export let entry: LedgerEntry;
-  export let originalTxDate: Date | undefined;
-  let formattedOriginalTxDate: string | undefined = undefined;
-  let formattedOriginalTxTime: string | undefined = undefined;
-  $: if (originalTxDate) {
-    formattedOriginalTxDate = originalTxDate.toDateString();
-    formattedOriginalTxTime = originalTxDate.toLocaleTimeString();
-  }
 
+  let originalTX: null | EntryHistory = null;
+  $: if (entry.history) {
+    originalTX = Ledger.getOriginalTX(entry.history[0]);
+  }
   const pathToThumbnail = (path: string): string =>
     `http://localhost:3000/file/${path}.png`;
 </script>
@@ -59,8 +57,8 @@
     {#if entry.one_file_hash}
       <pre>📁 {entry.one_file_hash}</pre>
     {/if}
-    {#if formattedOriginalTxDate}
-      <pre>🕰️ Added on {formattedOriginalTxDate}, {formattedOriginalTxTime}</pre>
+    {#if entry.history}
+      <pre>🕰️ Added on {originalTX.originalTxDate}, {originalTX.originalTxTime}</pre>
     {/if}
   </div>
 </section>
