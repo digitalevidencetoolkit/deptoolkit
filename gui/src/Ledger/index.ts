@@ -67,10 +67,11 @@ export async function addHistoryTo(entry: LedgerEntry) {
   });
 }
 
-export const getOriginalTX = (h: QLDBHistory): EntryHistory => {
-  const originalTx = new Date(h.metadata.txTime);
+export const getOriginalTX = (h: QLDBHistory[]): EntryHistory => {
+  const originalTx = h[0];
+  const originalTxDate = new Date(originalTx.metadata.txTime);
   return {
-    originalTxDate: originalTx.toDateString(),
-    originalTxTime: originalTx.toLocaleTimeString(),
+    originalTxDate: originalTxDate.toDateString(),
+    originalTxTime: originalTxDate.toLocaleTimeString(),
   };
 };

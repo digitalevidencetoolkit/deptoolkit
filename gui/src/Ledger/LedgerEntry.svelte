@@ -5,7 +5,7 @@
 
   let originalTX: null | EntryHistory = null;
   $: if (entry.history) {
-    originalTX = Ledger.getOriginalTX(entry.history[0]);
+    originalTX = Ledger.getOriginalTX(entry.history);
   }
   const pathToThumbnail = (path: string): string =>
     `http://localhost:3000/file/${path}.png`;
