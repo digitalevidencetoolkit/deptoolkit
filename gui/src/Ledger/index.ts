@@ -7,7 +7,7 @@ export type LedgerEntry = {
   sku: string;
   hash?: string;
   thumb?: string;
-  history?: QLDBHistory[];
+  history?: QLDBHistory;
 };
 
 export type EntryHistory = {
@@ -15,7 +15,9 @@ export type EntryHistory = {
   originalTxTime: string;
 };
 
-export type QLDBHistory = {
+export type QLDBHistory = QLDBHistoryItem[];
+
+type QLDBHistoryItem = {
   blockAddress: {};
   data: {};
   metadata: { txTime: string };
@@ -34,7 +36,7 @@ export async function fetchData(): Promise<LedgerEntry[]> {
  * @returns a promise of a history (an array of revisions)
  */
 // @TODO: error handling!
-async function fetchItemHistory(id: string): Promise<QLDBHistory[]> {
+async function fetchItemHistory(id: string): Promise<QLDBHistory> {
   const res = await fetch(`http://localhost:3000/history/${id}`);
   const data = await res.json();
   return data;
@@ -67,7 +69,7 @@ export async function addHistoryTo(entry: LedgerEntry) {
   });
 }
 
-export const getOriginalTX = (h: QLDBHistory[]): EntryHistory => {
+export const getOriginalTX = (h: QLDBHistory): EntryHistory => {
   const originalTx = h[0];
   const originalTxDate = new Date(originalTx.metadata.txTime);
   return {
