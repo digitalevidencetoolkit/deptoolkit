@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as Ledger from './index';
   import type { LedgerEntry, EntryHistory } from './index';
+  import History from '../History.svelte';
   export let entry: LedgerEntry;
 
   let originalTX: null | EntryHistory = null;
@@ -58,6 +59,7 @@
       <pre>📁 {entry.one_file_hash}</pre>
     {/if}
     {#if entry.history}
+      <History data={entry.history} />
       <pre>🕰️ Added on {originalTX.originalTxDate}, {originalTX.originalTxTime}</pre>
     {/if}
   </div>
