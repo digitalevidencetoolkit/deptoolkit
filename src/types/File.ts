@@ -1,10 +1,10 @@
 type Hash = string;
 
-export type Process = 'screenshot' | '1file' | 'screenshot_thumbnail';
+export type Process = 'screenshot' | 'one_file' | 'screenshot_thumbnail';
 
 export type File = { kind: Process; hash: Hash };
 
-export type newFile = { kind: Process; data: Buffer };
+export type newFile = { kind: Process; data: Buffer | string };
 
 /**
  * A File's ID is its hash

@@ -15,6 +15,7 @@ export type FrontEndRecord = {
   url: string;
   thumb?: string;
   hash?: string;
+  one_file?: string;
 };
 
 const DocSchema = yup
@@ -71,6 +72,7 @@ export const fromLedger = (o: ArbitraryObject): Record => {
         kind: 'screenshot_thumbnail' as const,
         hash: o?.screenshot_thumbnail,
       },
+      { kind: 'one_file' as const, hash: o?.one_file },
     ],
   };
   console.warn(` got this junk from the ledger: ${o}`);
@@ -87,4 +89,5 @@ export const toFrontend = (r: Record): FrontEndRecord => ({
   url: r.data.url,
   thumb: r.bundle.find(f => f.kind === 'screenshot_thumbnail')?.hash,
   hash: r.bundle.find(f => f.kind === 'screenshot')?.hash,
+  one_file: r.bundle.find(f => f.kind === 'one_file')?.hash,
 });

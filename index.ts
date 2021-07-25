@@ -59,6 +59,7 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
 
   form.parse(req, async (err: any, fields: Fields): Promise<void> => {
     let base64Data: string;
+    let onefileData: string;
     //@ts-expect-error
     base64Data = fields.scr.replace(/^data:image\/png;base64,/, '');
     base64Data += base64Data.replace('+', ' ');
@@ -66,14 +67,16 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
     const thumbnailData = await sharp(screenshotData)
       .resize(320, 240, { fit: 'inside' })
       .toBuffer();
+    onefileData = fields.onefile as string;
 
     const { url, title } = fields;
-    const file = { kind: 'screenshot' as const, data: screenshotData };
+    const screenshot = { kind: 'screenshot' as const, data: screenshotData };
     const thumbnail = {
       kind: 'screenshot_thumbnail' as const,
       data: thumbnailData,
     };
-    Store.newBundle([file, thumbnail]).then(b => {
+    const onefile = { kind: 'one_file' as const, data: onefileData };
+    Store.newBundle([screenshot, thumbnail, onefile]).then(b => {
       const document = {
         bundle: b,
         annotations: { description: '' },
