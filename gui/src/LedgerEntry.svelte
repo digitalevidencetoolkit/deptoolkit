@@ -48,5 +48,8 @@
     <pre>🔗 {entry.url}</pre>
     <pre>🔖 {entry.sku}</pre>
     <pre>⚙️ {entry.hash}</pre>
+    {#if entry.one_file}
+      <pre>📁 {entry.one_file}</pre>
+    {/if}
   </div>
 </section>
