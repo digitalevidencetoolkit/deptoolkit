@@ -57,7 +57,6 @@ app.get(
 );
 
 app.post('/form', async (req: Request, res: Response): Promise<Response> => {
-  // wrap callback based formidable code in modern promises
   return new Promise((resolve, reject) => {
     const form = new formidable.IncomingForm();
     form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
@@ -70,17 +69,18 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       const thumbnailData = await sharp(screenshotData)
         .resize(320, 240, { fit: 'inside' })
         .toBuffer();
-
-      const screenshot = { kind: 'screenshot' as const, data: screenshotData };
-      const thumbnail = {
-        kind: 'screenshot_thumbnail' as const,
-        data: thumbnailData,
-      };
+    let onefileData: string;
+    onefileData = fields.onefile as string;
+	
+    const screenshot = { kind: 'screenshot' as const, data: screenshotData };
+    const thumbnail = {
+      kind: 'screenshot_thumbnail' as const,
+      data: thumbnailData,
+    };
+    const onefile = { kind: 'one_file' as const, data: onefileData };
 
       await Store
-        // create and store a bundle from the form data
-        .newBundle([screenshot, thumbnail])
-        // convert this Bundle into a Record, using the rest of the form data
+        .newBundle([screenshot, thumbnail, onefile])
         .then((bundle: Bundle.Bundle) => {
           const record = {
             bundle,
@@ -89,16 +89,13 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
           };
           return record;
         })
-        // insert this document into the ledger
         .then((r: Record.Record) => {
           return Ledger.insertDoc(r);
         })
-        // if everything worked well, resolve the promise
         .then(_ => {
           console.log(`ledger inserted correctly`);
           resolve(res.status(200).send('Received POST on /form'));
         })
-        // if something failed, resolve the promise with a failure message
         .catch(e => {
           resolve(
             res.status(422).send(`${e.name} (type ${e.type}): ${e.message}`)

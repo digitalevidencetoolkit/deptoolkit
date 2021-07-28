@@ -16,11 +16,11 @@ const config = {
 
 /**
  * Promise to write a buffer to a path
- * @param b a buffer
+ * @param b a buffer if file is an image ; a string of HTML code if file is a page
  * @param path string
  * @returns A resolved promise
  */
-const writeToDisk = (b: Buffer, path: string): Promise<void> =>
+const writeToDisk = (b: Buffer | string, path: string): Promise<void> =>
   new Promise((resolve, reject) =>
     fs.writeFile(path, b, err => {
       if (err) reject(err);
@@ -30,7 +30,7 @@ const writeToDisk = (b: Buffer, path: string): Promise<void> =>
 
 /**
  * Logic for saving a file to disk from a storage config object
- * @param a a newFile, made of a buffer
+ * @param a a newFile, made of a buffer or of a string of HTML code
  * @returns a promise of a File, having been written to disk
  **/
 export const writeOne = async (a: File.newFile): Promise<File.File> => {
@@ -41,7 +41,8 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
   // create the directory if it does not yet exist
   await mkdir(dir, { recursive: true });
   const name = makeHash(a.data);
-  const path = `${dir}/${name}.png`;
+  const format = a.kind === 'one_file' ? 'html' : 'png';
+  const path = `${dir}/${name}.${format}`;
   await writeToDisk(a.data, path);
   return { kind: a.kind, hash: name };
 };

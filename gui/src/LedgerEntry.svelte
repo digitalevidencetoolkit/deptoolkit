@@ -39,14 +39,17 @@
 
 <section>
   <div class="thumbnail">
-    {#if entry.hash}
-      <img src={pathToThumbnail(entry.thumb)} alt="" />
+    {#if entry.thumb_hash}
+      <img src={pathToThumbnail(entry.thumb_hash)} alt="" />
     {/if}
   </div>
   <div class="metadata">
     <h4>📦 • {entry.title}</h4>
     <pre>🔗 {entry.url}</pre>
     <pre>🔖 {entry.sku}</pre>
-    <pre>⚙️ {entry.hash}</pre>
+    <pre>📷️ {entry.screenshot_hash}</pre>
+    {#if entry.one_file_hash}
+      <pre>📁 {entry.one_file_hash}</pre>
+    {/if}
   </div>
 </section>
