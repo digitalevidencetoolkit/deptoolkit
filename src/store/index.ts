@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { mkdir } from 'fs/promises';
 import { makeHash } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
@@ -37,6 +38,8 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
   if (!dir) {
     throw new Error(`No directory set in config`);
   }
+  // create the directory if it does not yet exist
+  await mkdir(dir, { recursive: true });
   const name = makeHash(a.data);
   const format = a.kind === 'one_file' ? 'html' : 'png';
   const path = `${dir}/${name}.${format}`;
