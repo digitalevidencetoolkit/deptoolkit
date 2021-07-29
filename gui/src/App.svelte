@@ -1,37 +1,35 @@
 <script lang="ts">
   import * as Ledger from './Ledger/index';
+  import Header from './Header.svelte';
+  import { Label, Loading, Button } from 'attractions';
+
+  // store and initial (async) data loading
   import { ledgerData } from './stores';
   ledgerData.set(Ledger.fetchData());
 </script>
 
-<style>
+<style type="text/scss">
   main {
     padding: 1em;
-    max-width: 240px;
     margin: 0 auto;
-    :global .introlabel {
+    :global .label {
       text-align: center;
     }
   }
 
-  @media (min-width: 640px) {
-    main {
-      max-width: none;
-    }
+  :global svg.feather {
+    transform: translateY(2px);
   }
 </style>
 
+<Header />
 <main>
   {#await $ledgerData}
-    <p>...waiting</p>
+    <Loading />
+    <Label>...waiting</Label>
   {:then data}
-    {#each data as item}
-      <Ledger.LedgerEntryComponent entry={item} />
-      <div>
-        <button on:click={() => Ledger.addHistoryTo(item)} href="#"
-          >🕰 Show history</button
-        >
-      </div>
+    {#each data as item, i}
+      <Ledger.LedgerEntryComponent entry={item} {i} />
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>
