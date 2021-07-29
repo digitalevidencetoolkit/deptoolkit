@@ -1,23 +1,7 @@
 <script lang="ts">
-  import LedgerEntryComponent from './LedgerEntry.svelte';
-  import type { LedgerEntry } from './types';
-
-  // double declaration to accomplish two things:
-  //   1. the typing of `ledgerData`,
-  //   2. its setting as a reactive store.
-  let ledgerData: null | LedgerEntry[];
-  $: ledgerData = null;
-
-  async function fetchData(): Promise<void | Error> {
-    const res = await fetch('http://localhost:3000/list-docs');
-    const data = await res.json();
-
-    if (res.ok) {
-      ledgerData = data;
-    } else {
-      throw new Error(data);
-    }
-  }
+  import * as Ledger from './Ledger/index';
+  import { ledgerData } from './stores';
+  ledgerData.set(Ledger.fetchData());
 </script>
 
 <style>
@@ -35,11 +19,16 @@
 </style>
 
 <main>
-  {#await fetchData()}
+  {#await $ledgerData}
     <p>...waiting</p>
-  {:then fulfilled}
-    {#each ledgerData as item}
-      <LedgerEntryComponent entry={item} />
+  {:then data}
+    {#each data as item}
+      <Ledger.LedgerEntryComponent entry={item} />
+      <div>
+        <button on:click={() => Ledger.addHistoryTo(item)} href="#"
+          >🕰 Show history</button
+        >
+      </div>
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>

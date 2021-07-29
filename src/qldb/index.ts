@@ -116,7 +116,6 @@ async function getDocumentIdByField(
   value: string
 ): Promise<string> {
   const query: string = `SELECT id FROM ${tableName} AS t BY id WHERE t.${field} = ?`;
-    console.log(query)
   let documentId: string = undefined;
   await txn
     .execute(query, value)

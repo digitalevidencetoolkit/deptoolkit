@@ -1,6 +1,13 @@
 <script lang="ts">
-  import type { LedgerEntry } from './types';
+  import * as Ledger from './index';
+  import type { LedgerEntry, EntryHistory } from './index';
+  import History from '../History.svelte';
   export let entry: LedgerEntry;
+
+  let originalTX: null | EntryHistory = null;
+  $: if (entry.history) {
+    originalTX = Ledger.getOriginalTX(entry.history);
+  }
   const pathToThumbnail = (path: string): string =>
     `http://localhost:3000/file/${path}.png`;
 </script>
@@ -50,6 +57,10 @@
     <pre>📷️ {entry.screenshot_hash}</pre>
     {#if entry.one_file_hash}
       <pre>📁 {entry.one_file_hash}</pre>
+    {/if}
+    {#if entry.history}
+      <History />
+      <pre>🕰️ Added on {originalTX.originalTxDate}, {originalTX.originalTxTime}</pre>
     {/if}
   </div>
 </section>
