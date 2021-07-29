@@ -1,5 +1,4 @@
 <script lang="ts">
-  export let data;
   const w = 300;
   const h = 50;
   const padding = 10;

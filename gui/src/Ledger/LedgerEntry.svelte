@@ -59,7 +59,7 @@
       <pre>📁 {entry.one_file_hash}</pre>
     {/if}
     {#if entry.history}
-      <History data={entry.history} />
+      <History />
       <pre>🕰️ Added on {originalTX.originalTxDate}, {originalTX.originalTxTime}</pre>
     {/if}
   </div>
