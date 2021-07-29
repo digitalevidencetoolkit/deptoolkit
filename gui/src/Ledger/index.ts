@@ -1,3 +1,4 @@
+import * as Ledger from './index';
 export { default as LedgerEntryComponent } from './LedgerEntry.svelte';
 import { ledgerData } from '../stores';
 
@@ -9,6 +10,7 @@ export type LedgerEntry = {
   thumb_hash?: string;
   one_file_hash?: string;
   history?: QLDBHistory;
+  description?: string;
 };
 
 export type EntryHistory = {
@@ -53,7 +55,6 @@ export async function addHistoryTo(entry: LedgerEntry) {
   const itemHistoryData = await fetchItemHistory(sku);
 
   ledgerData.update(async (d: Promise<LedgerEntry[]>) => {
-    // let newStore;
     let newStore = await d.then(data => {
       const itemToUpdate = data.find(e => e.sku === sku);
       const updatedItem = { ...itemToUpdate, history: itemHistoryData };
@@ -79,12 +80,20 @@ export const getOriginalTX = (h: QLDBHistory): EntryHistory => {
   };
 };
 
-export async function editAThing(thing: FormData, id: string) {
+/**
+ * Sends the edits to a document to the API
+ * @param thing a FormData from the form popping up for each document
+ * @param id the ID of the document to edit
+ **/
+// @TODO: make this function return a fulfilling or rejecting promise
+export async function postDocumentRevision(thing: FormData, id: string) {
   const res = await fetch(`http://localhost:3000/edit-description/${id}`, {
     method: 'POST',
     body: thing,
   });
-  const data = await res;
-  // then update ledgerData to redraw UI with latest addition
-  // or surface problem
+
+  // @TODO: implement store.update() to avoid a full page refresh
+  if (res.ok === true) {
+    ledgerData.set(Ledger.fetchData());
+  }
 }

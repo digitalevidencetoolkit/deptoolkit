@@ -115,7 +115,7 @@ app.post(
           resolve(res.status(400).send(`${err.name}: ${err.message}`)); // FIXME: don't expose js errors to public
         }
         const { description } = fields;
-        const update = { description: description };
+        const update = { description: description as string };
         Ledger.updateDoc(sku, update);
 
         resolve(res.status(200).send(`Wrote description to ${sku}`));

@@ -1,9 +1,8 @@
 <script lang="ts">
   import * as Ledger from './index';
   import type { LedgerEntry, EntryHistory } from './index';
-  import History from '../History.svelte';
-  export let entry: LedgerEntry;
-  export let i: number;
+  import EditingPanel from './EditingPanel.svelte';
+  import { domainFromUrl, shortHash } from '../helpers';
 
   //UI
   import { Button } from 'attractions';
@@ -14,18 +13,22 @@
     CameraIcon,
     FileTextIcon,
     EditIcon,
+    BookOpenIcon,
   } from 'svelte-feather-icons';
+
+  export let entry: LedgerEntry;
+  export let i: number;
+  let showEditingPanel: boolean = false;
 
   let originalTX: null | EntryHistory = null;
   $: if (entry.history) {
     originalTX = Ledger.getOriginalTX(entry.history);
   }
+
   const pathToThumbnail = (path: string): string =>
     `http://localhost:3000/file/${path}.png`;
 
   const isOdd = i % 2 === 0;
-
-  let showEditingPanel: boolean = false;
 </script>
 
 <style type="text/scss">
@@ -42,11 +45,12 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
   }
 
   section {
-    //height: 250px;
+    height: 220px;
 
     &.even {
       background-color: #fbfbfb;
@@ -60,6 +64,20 @@
 
     .metadata {
       margin-left: 1rem;
+
+      .showHelp:hover {
+        cursor: help;
+        color: #696969;
+        transition: color 0.3s;
+      }
+
+      .hashes {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 250px;
+      }
     }
 
     .row {
@@ -69,37 +87,46 @@
   }
 </style>
 
-<section>
+<section class={isOdd === true ? 'odd' : 'even'}>
   <div class="thumbnail">
     {#if entry.thumb_hash}
       <img src={pathToThumbnail(entry.thumb_hash)} alt="" />
     {/if}
   </div>
   <div class="metadata">
-    <h4>📦 • {entry.title}</h4>
-    <pre>🔗 {entry.url}</pre>
-    <pre>🔖 {entry.sku}</pre>
-    <pre>📷️ {entry.screenshot_hash}</pre>
-    {#if entry.one_file_hash}
-      <pre>📁 {entry.one_file_hash}</pre>
-    {/if}
+    <h4>{entry.title}</h4>
+
+    <pre><ExternalLinkIcon size="1x" /> <a href={entry.url}>{domainFromUrl(entry.url)}</a></pre>
+    <div class="hashes">
+      <pre
+        class="showHelp"
+        title={entry.sku}><KeyIcon size="1x" /> {shortHash(entry.sku)}</pre>
+      <pre
+        class="showHelp"
+        title={entry.screenshot_hash}><CameraIcon size="1x" /> {shortHash(entry.screenshot_hash)}</pre>
+      {#if entry.one_file_hash}
+        <pre
+          class="showHelp"
+          title={entry.one_file_hash}><FileTextIcon size="1x" /> {shortHash(entry.one_file_hash)}</pre>
+      {/if}
+    </div>
 
     {#if entry.history}
       <pre><ClockIcon size="1x" /> Added on <b>{originalTX.originalTxDate}, {originalTX.originalTxTime}</b></pre>
     {/if}
 
+    {#if entry.description}
+      <pre><BookOpenIcon size="1x"/> {entry.description}</pre>
+    {/if}
+
     <div class="row" style="margin-top: 1rem;">
       <Button
         small
-        outline
         disabled={entry.history ? true : false}
         on:click={() => Ledger.addHistoryTo(entry)}
         ><pre><ClockIcon size="1x" /> Show history</pre></Button
       >
-      <Button
-        small
-        outline
-        on:click={() => (showEditingPanel = !showEditingPanel)}
+      <Button small on:click={() => (showEditingPanel = !showEditingPanel)}
         ><pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
       >
     </div>
