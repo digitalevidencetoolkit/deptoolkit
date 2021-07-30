@@ -3,6 +3,18 @@
   import type { LedgerEntry, EntryHistory } from './index';
   import History from '../History.svelte';
   export let entry: LedgerEntry;
+  export let i: number;
+
+  //UI
+  import { Button } from 'attractions';
+  import {
+    ClockIcon,
+    ExternalLinkIcon,
+    KeyIcon,
+    CameraIcon,
+    FileTextIcon,
+    EditIcon,
+  } from 'svelte-feather-icons';
 
   let originalTX: null | EntryHistory = null;
   $: if (entry.history) {
@@ -10,6 +22,10 @@
   }
   const pathToThumbnail = (path: string): string =>
     `http://localhost:3000/file/${path}.png`;
+
+  const isOdd = i % 2 === 0;
+
+  let showEditingPanel: boolean = false;
 </script>
 
 <style type="text/scss">
@@ -30,7 +46,11 @@
   }
 
   section {
-    height: 250px;
+    //height: 250px;
+
+    &.even {
+      background-color: #fbfbfb;
+    }
 
     .thumbnail,
     img {
@@ -40,6 +60,11 @@
 
     .metadata {
       margin-left: 1rem;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: row;
     }
   }
 </style>
@@ -58,9 +83,28 @@
     {#if entry.one_file_hash}
       <pre>📁 {entry.one_file_hash}</pre>
     {/if}
+
     {#if entry.history}
-      <History />
-      <pre>🕰️ Added on {originalTX.originalTxDate}, {originalTX.originalTxTime}</pre>
+      <pre><ClockIcon size="1x" /> Added on <b>{originalTX.originalTxDate}, {originalTX.originalTxTime}</b></pre>
+    {/if}
+
+    <div class="row" style="margin-top: 1rem;">
+      <Button
+        small
+        outline
+        disabled={entry.history ? true : false}
+        on:click={() => Ledger.addHistoryTo(entry)}
+        ><pre><ClockIcon size="1x" /> Show history</pre></Button
+      >
+      <Button
+        small
+        outline
+        on:click={() => (showEditingPanel = !showEditingPanel)}
+        ><pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
+      >
+    </div>
+    {#if showEditingPanel === true}
+      <EditingPanel {entry} />
     {/if}
   </div>
 </section>

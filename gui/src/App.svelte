@@ -9,6 +9,9 @@
     padding: 1em;
     max-width: 240px;
     margin: 0 auto;
+    :global .introlabel {
+      text-align: center;
+    }
   }
 
   @media (min-width: 640px) {
