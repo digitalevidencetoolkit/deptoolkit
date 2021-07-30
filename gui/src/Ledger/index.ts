@@ -78,3 +78,13 @@ export const getOriginalTX = (h: QLDBHistory): EntryHistory => {
     originalTxTime: originalTxDate.toLocaleTimeString(),
   };
 };
+
+export async function editAThing(thing: FormData, id: string) {
+  const res = await fetch(`http://localhost:3000/edit-description/${id}`, {
+    method: 'POST',
+    body: thing,
+  });
+  const data = await res;
+  // then update ledgerData to redraw UI with latest addition
+  // or surface problem
+}
