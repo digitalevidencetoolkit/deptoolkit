@@ -167,3 +167,30 @@ export const queryHistoryOfDocument = async function (
     console.log(`Unable to query history of document in ${tableName}`);
   }
 };
+
+/**
+ * Update a particular document's description field
+ * @param tableName Name of the table to insert documents into.
+ * @param description String to add to the ledger
+ * @param id Unique identifier of the document
+ * @returns Promise which fulfills with a list of result(s)
+ */
+export const updateDocument = async function (
+  tableName: string,
+  description: string,
+  id: string
+): Promise<Result> {
+  try {
+    const qldbDriver: QldbDriver = getQldbDriver();
+    const statement: string = `UPDATE ${tableName} AS r 
+    SET r.description = ?
+    WHERE r.id = ?`;
+    let r = qldbDriver.executeLambda(async (txn: TransactionExecutor) => {
+      let results = await txn.execute(statement, description, id);
+      return results;
+    });
+    return r;
+  } catch (e) {
+    console.log(`Unable to update document: ${e}`);
+  }
+};

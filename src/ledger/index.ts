@@ -1,4 +1,6 @@
 import * as Record from '../types/Record';
+import * as Annotations from '../types/Annotations';
+import type { Annotation } from '../types/Annotations';
 import * as QLDB from '../qldb';
 import { dom } from 'ion-js';
 
@@ -22,4 +24,13 @@ export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {
   const list = await QLDB.queryHistoryOfDocument(sku);
   const result = list.getResultList();
   return result;
-}
+};
+
+export const updateDoc = async (sku: string, data: Annotation) => {
+  Annotations.validate(data)
+    .then(annotation => annotation.description)
+    .then(description =>
+      QLDB.updateDocument(QLDB.Constants.doc_table_name, description, sku)
+    )
+    .catch(err => console.log(`${err.name}: ${err.errors}`));
+};

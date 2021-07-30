@@ -16,6 +16,7 @@ export type FrontEndRecord = {
   thumb_hash?: string;
   screenshot_hash?: string;
   one_file_hash?: string;
+  description?: string;
 };
 
 const DocSchema = yup
@@ -90,4 +91,5 @@ export const toFrontend = (r: Record): FrontEndRecord => ({
   thumb_hash: r.bundle.find(f => f.kind === 'screenshot_thumbnail')?.hash,
   screenshot_hash: r.bundle.find(f => f.kind === 'screenshot')?.hash,
   one_file_hash: r.bundle.find(f => f.kind === 'one_file')?.hash,
+  description: r.annotations?.description,
 });
