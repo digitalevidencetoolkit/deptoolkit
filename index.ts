@@ -69,18 +69,17 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       const thumbnailData = await sharp(screenshotData)
         .resize(320, 240, { fit: 'inside' })
         .toBuffer();
-    let onefileData: string;
-    onefileData = fields.onefile as string;
-	
-    const screenshot = { kind: 'screenshot' as const, data: screenshotData };
-    const thumbnail = {
-      kind: 'screenshot_thumbnail' as const,
-      data: thumbnailData,
-    };
-    const onefile = { kind: 'one_file' as const, data: onefileData };
+      let onefileData: string;
+      onefileData = fields.onefile as string;
 
-      await Store
-        .newBundle([screenshot, thumbnail, onefile])
+      const screenshot = { kind: 'screenshot' as const, data: screenshotData };
+      const thumbnail = {
+        kind: 'screenshot_thumbnail' as const,
+        data: thumbnailData,
+      };
+      const onefile = { kind: 'one_file' as const, data: onefileData };
+
+      await Store.newBundle([screenshot, thumbnail, onefile])
         .then((bundle: Bundle.Bundle) => {
           const record = {
             bundle,
@@ -104,6 +103,24 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
     });
   });
 });
+
+app.post(
+  '/edit-description/:sku',
+  async (req: Request, res: Response): Promise<Response> => {
+    const { sku } = req.params;
+    return new Promise((resolve, reject) => {
+      const form = new formidable.IncomingForm();
+      form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
+        if (err) {
+          resolve(res.status(400).send(`${err.name}: ${err.message}`)); // FIXME: don't expose js errors to public
+        }
+        const { description } = fields;
+        console.log(description);
+        resolve(res.status(200).send(`Wrote description to ${sku}`));
+      });
+    });
+  }
+);
 
 try {
   app.listen(port, (): void => {
