@@ -7,7 +7,7 @@
       "email": "niko@niko.io"
     }
   ],
-  "version": "0.4.1",
+  "version": "0.5.0",
   "dependencies": {
     "@types/formidable": "^1.2.2",
     "amazon-qldb-driver-nodejs": "^2.2.0",
