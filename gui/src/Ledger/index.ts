@@ -1,4 +1,3 @@
-import * as Ledger from './index';
 export { default as LedgerEntryComponent } from './LedgerEntry.svelte';
 import { ledgerData } from '../stores';
 
@@ -71,7 +70,7 @@ export async function addHistoryTo(entry: LedgerEntry) {
   });
 }
 
-const getTXDateFromBlock = (b: QLDBHistoryItem): Date =>
+export const getTXDateFromBlock = (b: QLDBHistoryItem): Date =>
   new Date(b.metadata.txTime);
 
 export const getOriginalTX = (h: QLDBHistory): OriginalTx => {
@@ -97,6 +96,6 @@ export async function postDocumentRevision(thing: FormData, id: string) {
 
   // @TODO: implement store.update() to avoid a full page refresh
   if (res.ok === true) {
-    ledgerData.set(Ledger.fetchData());
+    ledgerData.set(fetchData());
   }
 }
