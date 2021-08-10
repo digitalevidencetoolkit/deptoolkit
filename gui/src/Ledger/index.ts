@@ -13,7 +13,7 @@ export type LedgerEntry = {
   description?: string;
 };
 
-export type EntryHistory = {
+export type OriginalTx = {
   originalTxDate: string;
   originalTxTime: string;
 };
@@ -71,9 +71,12 @@ export async function addHistoryTo(entry: LedgerEntry) {
   });
 }
 
-export const getOriginalTX = (h: QLDBHistory): EntryHistory => {
+const getTXDateFromBlock = (b: QLDBHistoryItem): Date =>
+  new Date(b.metadata.txTime);
+
+export const getOriginalTX = (h: QLDBHistory): OriginalTx => {
   const originalTx = h[0];
-  const originalTxDate = new Date(originalTx.metadata.txTime);
+  const originalTxDate = getTXDateFromBlock(originalTx);
   return {
     originalTxDate: originalTxDate.toDateString(),
     originalTxTime: originalTxDate.toLocaleTimeString(),
