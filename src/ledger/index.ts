@@ -20,6 +20,16 @@ export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
     .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
 };
 
+export const getDoc = async (id: string): Promise<Record.Record> => {
+  const list: Result = await QLDB.getOneDocument(
+    id,
+    QLDB.Constants.doc_table_name
+  );
+  const result = list.getResultList();
+  // return result.map(e => Record.fromLedger(e));
+  return Record.fromLedger(result[0]);
+};
+
 export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {
   const list = await QLDB.queryHistoryOfDocument(sku);
   const result = list.getResultList();
