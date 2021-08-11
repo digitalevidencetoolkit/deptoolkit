@@ -1,0 +1,58 @@
+{
+  "manifest_version": 2,
+  "name": "Deptoolkit Archiver",
+  "description": "A Firefox extension to archive digital media content",
+  "version": "1.0",
+  "homepage_url": "https://github.com/digitalevidencetoolkit/firefox-extension",
+  "icons": {
+    "48": "icons/logo.png"
+  },
+
+  "permissions": ["activeTab", "*://localhost/*", "<all_urls>"],
+
+  "browser_action": {
+    "default_icon": "icons/logo.png",
+    "theme_icons": [
+      {
+        "light": "icons/logo_dark.png",
+        "dark": "icons/logo.png",
+        "size": 32
+      }
+    ],
+    "default_title": "Archiver",
+    "default_popup": "popup/index.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_start",
+      "js": [
+        "single-file/dist/chrome-browser-polyfill.js",
+        "single-file/dist/single-file-frames.js",
+        "single-file/dist/extension-frames.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_start",
+      "js": [
+        "single-file/dist/chrome-browser-polyfill.js",
+        "single-file/dist/single-file-bootstrap.js",
+        "single-file/dist/extension-core.js",
+        "single-file/dist/single-file.js"
+      ],
+      "all_frames": false
+    }
+  ],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "web_accessible_resources": [
+    "single-file/dist/web/hooks/hooks-web.js",
+    "single-file/dist/web/hooks/hooks-frames-web.js"
+  ]
+}
