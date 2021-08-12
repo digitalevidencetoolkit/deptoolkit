@@ -57,7 +57,7 @@ app.get(
       dotfiles: 'deny',
     };
     await Ledger.getDoc(sku)
-      .then((b: Record.Record) => Store.makeZip(b.bundle))
+      .then((r: Record.Record) => Store.makeZip(r))
       .then(() =>
         res
           .set(`Content-Type`, `application/octet-stream`)
