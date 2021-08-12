@@ -133,5 +133,9 @@
     {#if showEditingPanel === true}
       <EditingPanel {entry} />
     {/if}
+
+    <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}
+      ><pre><EditIcon size="1x" /> Download ZIP</pre></Button
+    >
   </div>
 </section>

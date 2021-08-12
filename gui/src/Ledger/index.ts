@@ -97,3 +97,14 @@ export async function postDocumentRevision(thing: FormData, id: string) {
     ledgerData.set(Ledger.fetchData());
   }
 }
+
+export async function requestWorkingCopy(sku: string) {
+  downloadAFile(`http://localhost:3000/export-copy/${sku}.zip`, `${sku}.zip`);
+}
+
+const downloadAFile = (fileUrl: string, fileName: string) => {
+  const a = document.createElement('a');
+  a.href = fileUrl;
+  a.setAttribute('download', fileName);
+  a.click();
+};
