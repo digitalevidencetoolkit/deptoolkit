@@ -6,6 +6,7 @@ import { makeHash } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
 import archiver from 'archiver';
+import { resolve } from 'path/posix';
 // import * as s3storage from s3storage
 
 const config = {
@@ -77,6 +78,10 @@ export const makeZip = (b: Bundle.Bundle): Promise<void> => {
   const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
 
   return new Promise<void>((resolve, reject) => {
+    stream.on('close', () => {
+      console.log(`${zip.pointer()} bytes written`);
+      resolve();
+    });
     zip
       .append(fs.createReadStream(`${root}/${screenshot}`), {
         name: screenshot,
@@ -84,11 +89,7 @@ export const makeZip = (b: Bundle.Bundle): Promise<void> => {
       .append(fs.createReadStream(`${root}/${one_file}`), { name: one_file })
       .on('error', err => reject(err))
       .pipe(stream);
-
-    zip.finalize().then(() => {
-      console.log(`${zip.pointer()} bytes written`);
-      resolve();
-    });
+    zip.finalize();
   });
 };
 

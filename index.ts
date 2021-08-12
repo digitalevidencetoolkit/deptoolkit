@@ -59,15 +59,10 @@ app.get(
     await Ledger.getDoc(sku)
       .then((b: Record.Record) => Store.makeZip(b.bundle))
       .then(() =>
-        // @TODO: !!!!!
-        setTimeout(
-          () =>
-            res
-              .set(`Content-Type`, `application/octet-stream`)
-              .set(`Content-Disposition`, `attachment; filename=${sku}`)
-              .sendFile(`${sku}`, options),
-          2000
-        )
+        res
+          .set(`Content-Type`, `application/octet-stream`)
+          .set(`Content-Disposition`, `attachment; filename=${sku}`)
+          .sendFile(`${sku}`, options)
       );
   }
 );
