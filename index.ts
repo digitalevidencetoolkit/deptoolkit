@@ -50,10 +50,25 @@ app.get(
 
 app.get(
   '/export-copy/:sku',
-  async (req: Request, res: Response): Promise<Response> => {
+  async (req: Request, res: Response): Promise<void> => {
     const { sku } = req.params;
-    const result = await Ledger.getDoc(sku);
-    return res.status(200).send(pprint(result));
+    const options = {
+      root: join(__dirname, './out'),
+      dotfiles: 'deny',
+    };
+    await Ledger.getDoc(sku)
+      .then((b: Record.Record) => Store.makeZip(b.bundle))
+      .then(() =>
+        // @TODO: !!!!!
+        setTimeout(
+          () =>
+            res
+              .set(`Content-Type`, `application/octet-stream`)
+              .set(`Content-Disposition`, `attachment; filename=${sku}`)
+              .sendFile(`${sku}`, options),
+          2000
+        )
+      );
   }
 );
 

@@ -1,8 +1,11 @@
 import * as fs from 'fs';
+import { join } from 'path';
+import 'archiver';
 import { mkdir } from 'fs/promises';
 import { makeHash } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
+import archiver from 'archiver';
 // import * as s3storage from s3storage
 
 const config = {
@@ -54,6 +57,39 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
  **/
 export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
   return Promise.all(b.map(writeOne));
+};
+
+/**
+ * Builds a ZIP file from a bundle
+ * @param b a Bundle, i.e. a list of Files
+ * @returns  a promise
+ */
+export const makeZip = (b: Bundle.Bundle): Promise<void> => {
+  const zip = archiver('zip', { zlib: { level: 0 } });
+  const out = `out/${Bundle.id(b)}.zip`;
+  const stream = fs.createWriteStream(out);
+  const root = join(__dirname, '../../out');
+
+  // presently the ZIP file only includes the full screenshot and one-file
+  // HTML archive. isolating them like so isn't the most elegant.
+  // maybe replace with a function from `Bundle`?
+  const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
+  const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
+
+  return new Promise<void>((resolve, reject) => {
+    zip
+      .append(fs.createReadStream(`${root}/${screenshot}`), {
+        name: screenshot,
+      })
+      .append(fs.createReadStream(`${root}/${one_file}`), { name: one_file })
+      .on('error', err => reject(err))
+      .pipe(stream);
+
+    zip.finalize().then(() => {
+      console.log(`${zip.pointer()} bytes written`);
+      resolve();
+    });
+  });
 };
 
 /**
