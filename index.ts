@@ -4,6 +4,7 @@ import { join } from 'path';
 import cors from 'cors';
 import sharp from 'sharp';
 import formidable, { Fields } from 'formidable';
+import chalk from 'chalk';
 
 import * as Ledger from './src/ledger';
 import * as Store from './src/store';
@@ -24,12 +25,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', async (req: Request, res: Response): Promise<Response> => {
-  return res.status(200).send({
-    message: 'Hello World!',
-  });
-});
-
 app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
   const { sku } = req.params;
   const options = {
@@ -44,6 +39,7 @@ app.get(
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
     const result = await Ledger.listDocHistory(sku);
+    console.log(chalk.bold(`GET /history/${sku}`))
     return res.status(200).send(pprint(result));
   }
 );
@@ -52,11 +48,13 @@ app.get(
   '/list-docs',
   async (req: Request, res: Response): Promise<Response> => {
     const result = await Ledger.listDocs();
+    console.log(chalk.bold(`GET /list-docs`));
     return res.status(200).send(pprint(result));
   }
 );
 
 app.post('/form', async (req: Request, res: Response): Promise<Response> => {
+  console.log(chalk.bold(`POST /form`));
   return new Promise((resolve, reject) => {
     const form = new formidable.IncomingForm();
     form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
@@ -108,6 +106,7 @@ app.post(
   '/edit-description/:sku',
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
+    console.log(chalk.bold(`POST /edit-description/${sku}`))
     return new Promise((resolve, reject) => {
       const form = new formidable.IncomingForm();
       form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
@@ -126,8 +125,8 @@ app.post(
 
 try {
   app.listen(port, (): void => {
-    console.log(`Connected successfully on port ${port}`);
+    console.log(chalk.green(`Connected successfully on port ${port} 🚀`));
   });
 } catch (error) {
-  console.error(`Error occured: ${error.message}`);
+    console.error(chalk.red(`❌ Error occured: ${error.message}`));
 }
