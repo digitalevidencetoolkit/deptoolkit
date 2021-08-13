@@ -10,6 +10,7 @@ import * as Ledger from './src/ledger';
 import * as Store from './src/store';
 import * as Bundle from './src/types/Bundle';
 import * as Record from './src/types/Record';
+import * as Verify from './src/verify';
 
 import { pprint, cleanupBase64 } from './src/helpers';
 
@@ -122,6 +123,26 @@ app.post(
     });
   }
 );
+
+app.post(
+  '/verify', async (req: Request, res: Response): Promise<Response> => {
+      console.log(chalk.bold(`POST /verify`));
+      return new Promise((resolve, reject) => {
+        const form = new formidable.IncomingForm();
+        form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
+          if (err) {
+            resolve(res.status(400).send(`${err.name}: ${err.message}`)); // FIXME: don't expose js errors to public
+          }
+          // extract fields
+	  const f = new Buffer('aaa');
+	  const match = Verify.verifyFile(f)
+          // if match, returns Record.Record
+          // if no match, return... false?
+          resolve(res.status(200).send(`Verified`));
+        });
+      })
+  });
+
 
 try {
   app.listen(port, (): void => {
