@@ -6,9 +6,23 @@
 
 <script lang="ts">
   // import Counter from '$lib/Counter.svelte';
+  import { Card } from 'attractions';
+  import { BookIcon } from 'svelte-feather-icons';
+  const routes = [
+    {
+      url: '/library',
+      name: 'Library',
+      description: 'Browse the contents of the archive',
+    },
+    {
+      url: '/verify',
+      name: 'Verify',
+      description: 'Bulk import and verify files against a ledger',
+    },
+  ];
 </script>
 
-<style>
+<style lang="scss">
   section {
     display: flex;
     flex-direction: column;
@@ -21,19 +35,23 @@
     width: 100%;
   }
 
-  .welcome {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding: 0 0 calc(100% * 495 / 2048) 0;
-  }
+  .cards {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: space-between;
 
-  .welcome img {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    display: block;
+    a {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    .card {
+      width: 40%;
+      justify-content: center;
+    }
   }
 </style>
 
@@ -43,4 +61,14 @@
 
 <section>
   <h1>The Digital Evidence Preservation Toolkit</h1>
+  <div class="cards">
+    {#each routes as route}
+      <a class="card" href={route.url}>
+        <Card outline>
+          <h3>{route.name}</h3>
+          <p>{route.description}</p>
+        </Card>
+      </a>
+    {/each}
+  </div>
 </section>

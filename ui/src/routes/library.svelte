@@ -1,4 +1,14 @@
-<style>
+<script lang="ts">
+  import * as Ledger from '$lib/Ledger/index';
+  import { Label, Loading } from 'attractions';
+  import { BookIcon } from 'svelte-feather-icons';
+
+  // store and initial (async) data loading
+  import { ledgerData } from '$lib/stores';
+  ledgerData.set(Ledger.fetchData());
+</script>
+
+<style lang="scss">
   .content {
     width: 100%;
     max-width: var(--column-width);
@@ -11,15 +21,15 @@
 </svelte:head>
 
 <div class="content">
-  <h1>Library</h1>
-
-  <p>
-    Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-    commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-    lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-    felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-    dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-    quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet
-    tortor. Nam euismod tellus id erat.
-  </p>
+  <h1><BookIcon size="1x" /> Library</h1>
+  {#await $ledgerData}
+    <Loading />
+    <Label>...waiting</Label>
+  {:then data}
+    {#each data as item, i}
+      <Ledger.LedgerEntryComponent entry={item} {i} />
+    {/each}
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
 </div>

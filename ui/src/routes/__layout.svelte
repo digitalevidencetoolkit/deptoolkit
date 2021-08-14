@@ -10,7 +10,7 @@
     flex-direction: column;
     padding: 1rem;
     width: 100%;
-    max-width: 1024px;
+    max-width: 1200px;
     margin: 0 auto;
     box-sizing: border-box;
   }
@@ -41,7 +41,7 @@
 </main>
 
 <footer>
-  <p>
+  <!-- <p>
     visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit
-  </p>
+  </p> -->
 </footer>
