@@ -7,19 +7,7 @@
 <script lang="ts">
   // import Counter from '$lib/Counter.svelte';
   import { Card } from 'attractions';
-  import { BookIcon } from 'svelte-feather-icons';
-  const routes = [
-    {
-      url: '/library',
-      name: 'Library',
-      description: 'Browse the contents of the archive',
-    },
-    {
-      url: '/verify',
-      name: 'Verify',
-      description: 'Bulk import and verify files against a ledger',
-    },
-  ];
+  import { BookIcon, CheckCircleIcon } from 'svelte-feather-icons';
 </script>
 
 <style lang="scss">
@@ -51,6 +39,17 @@
     .card {
       width: 40%;
       justify-content: center;
+
+      :global .introtitle {
+        display: flex;
+        align-items: center;
+        transition: 0.5s color;
+
+        &:hover {
+          color: #000;
+          text-decoration: underline;
+        }
+      }
     }
   }
 </style>
@@ -62,13 +61,17 @@
 <section>
   <h1>The Digital Evidence Preservation Toolkit</h1>
   <div class="cards">
-    {#each routes as route}
-      <a class="card" href={route.url}>
-        <Card outline>
-          <h3>{route.name}</h3>
-          <p>{route.description}</p>
-        </Card>
-      </a>
-    {/each}
+    <a class="card" href="/library">
+      <Card>
+        <h1 class="introtitle"><BookIcon size="2x" /> Library</h1>
+        <p>Browse the contents of the archive</p>
+      </Card>
+    </a>
+    <a class="card" href="/verify">
+      <Card>
+        <h1 class="introtitle"><CheckCircleIcon size="2x" /> Verify</h1>
+        <p>Bulk import and verify files against a ledger</p>
+      </Card>
+    </a>
   </div>
 </section>
