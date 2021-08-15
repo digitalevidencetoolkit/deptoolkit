@@ -28,6 +28,7 @@
     flex-direction: row;
     width: 80%;
     justify-content: space-between;
+    margin-top: 3rem;
 
     a {
       color: var(--text-color);
@@ -64,7 +65,7 @@
     <a class="card" href="/library">
       <Card>
         <h1 class="introtitle"><BookIcon size="2x" /> Library</h1>
-        <p>Browse the contents of the archive</p>
+        <p>Browse the contents of the archive, edit metadata</p>
       </Card>
     </a>
     <a class="card" href="/verify">

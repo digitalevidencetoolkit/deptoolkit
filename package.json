@@ -31,9 +31,8 @@
   "scripts": {
     "start": "ts-node-dev ./index.ts",
     "server": "ts-node-dev ./index.ts",
-    "gui": "cd gui && npm run dev",
     "ui": "cd ui && npm run dev",
-    "all": "npm run server & npm run gui & npm run ui"
+    "all": "npm run server &  npm run ui"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",

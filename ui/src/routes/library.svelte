@@ -9,10 +9,18 @@
 </script>
 
 <style lang="scss">
-  .content {
+  hr {
+    color: var(--accent-color);
+  }
+  section {
     width: 100%;
     max-width: var(--column-width);
     margin: var(--column-margin-top) auto 0 auto;
+
+    .center {
+      margin-top: 3rem;
+      text-align: center;
+    }
   }
 </style>
 
@@ -20,11 +28,14 @@
   <title>Library</title>
 </svelte:head>
 
-<div class="content">
+<section>
   <h1><BookIcon size="1x" /> Library</h1>
+  <hr />
   {#await $ledgerData}
-    <Loading />
-    <Label>...waiting</Label>
+    <div class="center">
+      <Loading />
+      <Label>...waiting</Label>
+    </div>
   {:then data}
     {#each data as item, i}
       <Ledger.LedgerEntryComponent entry={item} {i} />
@@ -32,4 +43,4 @@
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
-</div>
+</section>
