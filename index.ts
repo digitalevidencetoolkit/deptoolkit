@@ -3,8 +3,9 @@ import { config } from 'dotenv';
 import { join } from 'path';
 import cors from 'cors';
 import sharp from 'sharp';
-import formidable, { Fields } from 'formidable';
+import formidable, { Fields, Files } from 'formidable';
 import chalk from 'chalk';
+import fs from 'fs/promises';
 
 import * as Ledger from './src/ledger';
 import * as Store from './src/store';
@@ -40,7 +41,7 @@ app.get(
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
     const result = await Ledger.listDocHistory(sku);
-    console.log(chalk.bold(`GET /history/${sku}`))
+    console.log(chalk.bold(`GET /history/${sku}`));
     return res.status(200).send(pprint(result));
   }
 );
@@ -107,7 +108,7 @@ app.post(
   '/edit-description/:sku',
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
-    console.log(chalk.bold(`POST /edit-description/${sku}`))
+    console.log(chalk.bold(`POST /edit-description/${sku}`));
     return new Promise((resolve, reject) => {
       const form = new formidable.IncomingForm();
       form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
@@ -124,30 +125,34 @@ app.post(
   }
 );
 
-app.post(
-  '/verify', async (req: Request, res: Response): Promise<Response> => {
-      console.log(chalk.bold(`POST /verify`));
-      return new Promise((resolve, reject) => {
-        const form = new formidable.IncomingForm();
-        form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
-          if (err) {
-            resolve(res.status(400).send(`${err.name}: ${err.message}`)); // FIXME: don't expose js errors to public
-          }
-          // extract fields
-	  const f = new Buffer('aaa');
-	  const match = Verify.verifyFile(f)
-          // if match, returns Record.Record
-          // if no match, return... false?
-          resolve(res.status(200).send(`Verified`));
-        });
-      })
+app.post('/verify', async (req: Request, res: Response): Promise<Response> => {
+  console.log(chalk.bold(`POST /verify`));
+  return new Promise((resolve, reject) => {
+    const form = new formidable.IncomingForm();
+    form.parse(req, async (err: Error, fields: Fields, files: Files) => {
+      // verify each file by opening it and sending it to check
+      // (which involves hashing and comparing to QLDB), then building
+      // the Response one file at a time and sending it once
+      Promise.all(
+        Object.keys(files).map(async i => {
+          await fs
+            // @ts-expect-error
+            .readFile(files[i].path)
+            .then(f => Verify.verifyFile(f))
+            .then(result =>
+              // @ts-expect-error
+              res.write(result ? files[i].name + ',' : 'null,')
+            );
+        })
+      ).then(() => res.send());
+    });
   });
-
+});
 
 try {
   app.listen(port, (): void => {
     console.log(chalk.green(`Connected successfully on port ${port} 🚀`));
   });
 } catch (error) {
-    console.error(chalk.red(`❌ Error occured: ${error.message}`));
+  console.error(chalk.red(`❌ Error occured: ${error.message}`));
 }

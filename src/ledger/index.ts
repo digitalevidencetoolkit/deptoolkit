@@ -21,13 +21,16 @@ export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
     .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
 };
 
-export const getDoc = async (id: string): Promise<Record.Record> => {
+export const getDoc = async (id: string): Promise<Record.Record | null> => {
   const list: Result = await QLDB.getOneDocument(
     id,
+    'screenshot',
     QLDB.Constants.doc_table_name
   );
   const result = list.getResultList();
-  return Record.fromLedger(result[0]);
+  if (result.length > 0) {
+    return Record.fromLedger(result[0]);
+  } else return null;
 };
 
 export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {

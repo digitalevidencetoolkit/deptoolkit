@@ -3,23 +3,30 @@
   import { CheckIcon } from 'svelte-feather-icons';
   let uploads: File[] | [] = [];
 
+  $: matches = [];
+  $: notfounds = [];
+
+  const parseMatches = (res: string) => {
+    const split = res.split(',');
+    matches = split.filter(e => e !== 'null');
+    notfounds = split.filter(e => e === 'nulll');
+  };
+
   async function postFiles(payload: FormData) {
-    const res = await fetch(`http://localhost:3000/verify`, {
+    await fetch(`http://localhost:3000/verify`, {
       method: 'POST',
       body: payload,
-    });
-
-    if (res.ok === true) {
-      console.log(res);
-    }
+    })
+      .then(res => res.text())
+      .then(data => parseMatches(data));
   }
+
   async function handleSubmit(e: Event) {
     const formData = new FormData();
     for (const i in uploads) {
-      console.log(`append file ${i}`);
-      formData.append(`file`, uploads[i], `file${i}.png`);
+      formData.append(uploads[i].name, uploads[i], uploads[i].name);
     }
-    postFiles;
+    postFiles(formData);
   }
 </script>
 
@@ -52,4 +59,13 @@
       <Button small type="submit"><CheckIcon size="1x" /> Submit</Button>
     {/if}
   </form>
+
+  <h3>Matches:</h3>
+  <table>
+    {#each matches as match}
+      <tr>
+        {match}
+      </tr>
+    {/each}
+  </table>
 </div>
