@@ -1,41 +1,40 @@
 version: '3'
 
 services:
-
   endpoint:
     build:
       context: .
       dockerfile: ./Dockerfile
     expose:
-      - "3000"
+      - '3000'
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - app
     volumes:
-      - "./out:/app/out"
+      - './out:/app/out'
 
   gui:
     build:
-      context: gui/
+      context: ui/
       dockerfile: Dockerfile
     expose:
-      - "5000"
+      - '8000'
     ports:
-      - "5000:5000"
+      - '8000:8000'
     networks:
       - app
     depends_on:
       - endpoint
-  
+
   extension:
     build:
       context: extension/
       dockerfile: Dockerfile
     expose:
-      - "9000"
+      - '9000'
     ports:
-      - "9000:9000"
+      - '9000:9000'
     networks:
       - app
     depends_on:

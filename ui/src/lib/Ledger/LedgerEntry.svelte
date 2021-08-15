@@ -2,7 +2,7 @@
   import * as Ledger from './index';
   import type { LedgerEntry, EntryHistory } from './index';
   import EditingPanel from './EditingPanel.svelte';
-  import { domainFromUrl, shortHash } from '../helpers';
+  import { domainFromUrl, shortHash } from '$lib/helpers';
 
   //UI
   import { Button } from 'attractions';
@@ -31,7 +31,7 @@
   const isOdd = i % 2 === 0;
 </script>
 
-<style type="text/scss">
+<style lang="scss">
   pre {
     margin-top: 0;
     margin-bottom: 0;
@@ -50,7 +50,7 @@
   }
 
   section {
-    height: 220px;
+    height: 250px;
 
     &.even {
       background-color: #fbfbfb;
@@ -60,6 +60,7 @@
     img {
       width: 300px;
       height: 200px;
+      border: 1px solid #ddd;
     }
 
     .metadata {
@@ -74,9 +75,8 @@
       .hashes {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
         justify-content: space-between;
-        width: 250px;
+        width: 300px;
       }
     }
 

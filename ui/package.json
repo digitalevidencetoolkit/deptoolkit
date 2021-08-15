@@ -1,0 +1,33 @@
+{
+  "name": "svelte-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "svelte-kit dev --port 8000",
+    "build": "svelte-kit build",
+    "preview": "svelte-kit preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "next",
+    "@types/cookie": "^0.4.0",
+    "attractions": "^3.3.0",
+    "postcss": "^8.3.6",
+    "prettier": "~2.2.1",
+    "prettier-plugin-svelte": "^2.2.0",
+    "sass": "^1.37.5",
+    "svelte": "^3.34.0",
+    "svelte-check": "^2.0.0",
+    "svelte-feather-icons": "^3.5.0",
+    "svelte-preprocess": "^4.7.4",
+    "tslib": "^2.0.0",
+    "typescript": "^4.0.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "@fontsource/fira-mono": "^4.2.2",
+    "@lukeed/uuid": "^2.0.0",
+    "cookie": "^0.4.1"
+  }
+}

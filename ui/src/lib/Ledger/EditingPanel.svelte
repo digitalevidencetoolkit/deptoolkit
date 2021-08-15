@@ -23,7 +23,7 @@
   };
 </script>
 
-<style type="text/scss">
+<style lang="scss">
   :global .text-field {
     width: 300px;
   }
