@@ -1,16 +1,15 @@
 <script lang="ts">
   import { FileDropzone, Button } from 'attractions';
-  import { fade } from 'svelte/transition';
   import { CheckIcon } from 'svelte-feather-icons';
   import * as Ledger from '$lib/Ledger';
   import { putFileinFormData, wait } from '$lib/helpers';
-  import EditingPanel from '$lib/Ledger/EditingPanel.svelte';
   let uploads: File[] | [] = [];
 
+  let matches: Ledger.LedgerEntry[] = [];
   $: matches = [];
 
-  const parseMatches = (res: {}) => {
-    if ('data' in res) {
+  const parseMatches = (res: Ledger.LedgerEntry) => {
+    if ('sku' in res) {
       matches = [...matches, res];
     }
   };
@@ -50,22 +49,14 @@
   </p>
 
   <form on:submit|preventDefault={handleSubmit} class="col">
-    <FileDropzone accept="image/*" max={10} bind:files={uploads} />
+    <FileDropzone accept="image/*" max={30} bind:files={uploads} />
     {#if uploads.length > 0}
       <Button small type="submit"><CheckIcon size="1x" /> Submit</Button>
     {/if}
   </form>
 
   <h3>Matches:</h3>
-  <table>
-    {#each matches as match}
-      <tr in:fade>
-        <td>
-          <CheckIcon size="1x" />
-        </td>
-        <td>{match.data.title}</td>
-        <td>{match.data.url}</td>
-      </tr>
-    {/each}
-  </table>
+  {#each matches as item, i}
+    <Ledger.LedgerEntryComponent entry={item} {i} />
+  {/each}
 </div>

@@ -142,7 +142,7 @@ app.post('/verify', async (req: Request, res: Response): Promise<Response> => {
             .then(result =>
               res.write(
                 result
-                  ? JSON.stringify(result)
+                  ? JSON.stringify(result[0])
                   : JSON.stringify({ not_found: 'item not found' })
               )
             );

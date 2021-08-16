@@ -21,7 +21,9 @@ export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
     .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
 };
 
-export const getDoc = async (id: string): Promise<Record.Record | null> => {
+export const getDoc = async (
+  id: string
+): Promise<Record.FrontEndRecord[] | null> => {
   const list: Result = await QLDB.getOneDocument(
     id,
     'screenshot',
@@ -29,7 +31,9 @@ export const getDoc = async (id: string): Promise<Record.Record | null> => {
   );
   const result = list.getResultList();
   if (result.length > 0) {
-    return Record.fromLedger(result[0]);
+    return result
+      .map(e => Record.fromLedger(e))
+      .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
   } else return null;
 };
 

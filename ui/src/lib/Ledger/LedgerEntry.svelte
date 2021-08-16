@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Ledger from './index';
+  import { fade } from 'svelte/transition';
   import type { LedgerEntry, EntryHistory } from './index';
   import EditingPanel from './EditingPanel.svelte';
   import { domainFromUrl, shortHash } from '$lib/helpers';
@@ -87,7 +88,7 @@
   }
 </style>
 
-<section class={isOdd === true ? 'odd' : 'even'}>
+<section class={isOdd === true ? 'odd' : 'even'} in:fade>
   <div class="thumbnail">
     {#if entry.thumb_hash}
       <img src={pathToThumbnail(entry.thumb_hash)} alt="" />
