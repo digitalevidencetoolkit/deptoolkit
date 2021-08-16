@@ -140,11 +140,14 @@ app.post('/verify', async (req: Request, res: Response): Promise<Response> => {
             .readFile(files[i].path)
             .then(f => Verify.verifyFile(f))
             .then(result =>
-              // @ts-expect-error
-              res.write(result ? files[i].name + ',' : 'null,')
+              res.write(
+                result
+                  ? JSON.stringify(result)
+                  : JSON.stringify({ not_found: 'item not found' })
+              )
             );
         })
-      ).then(() => res.send());
+      ).then(() => resolve(res.send()));
     });
   });
 });

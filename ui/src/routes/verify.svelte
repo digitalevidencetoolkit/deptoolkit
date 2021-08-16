@@ -4,15 +4,15 @@
   import { CheckIcon } from 'svelte-feather-icons';
   import * as Ledger from '$lib/Ledger';
   import { putFileinFormData, wait } from '$lib/helpers';
+  import EditingPanel from '$lib/Ledger/EditingPanel.svelte';
   let uploads: File[] | [] = [];
 
   $: matches = [];
-  $: notfounds = [];
 
-  const parseMatches = (res: string) => {
-    const split = res.split(',');
-    matches = [...matches, split.filter(e => e !== 'null')];
-    notfounds = [...notfounds, split.filter(e => e === 'nulll')];
+  const parseMatches = (res: {}) => {
+    if ('data' in res) {
+      matches = [...matches, res];
+    }
   };
 
   async function handleSubmit() {
@@ -20,7 +20,7 @@
       wait(200 * i)
         .then(() => putFileinFormData(uploads[i]))
         .then(form => Ledger.verifyFile(form))
-        .then(res => res.text())
+        .then(res => res.json())
         .then(data => parseMatches(data));
     }
   }
@@ -60,8 +60,11 @@
   <table>
     {#each matches as match}
       <tr in:fade>
-        <CheckIcon size="1x" />
-        {match}
+        <td>
+          <CheckIcon size="1x" />
+        </td>
+        <td>{match.data.title}</td>
+        <td>{match.data.url}</td>
       </tr>
     {/each}
   </table>
