@@ -1,6 +1,9 @@
 <script lang="ts">
   import { FileDropzone, Button } from 'attractions';
+  import { fade } from 'svelte/transition';
   import { CheckIcon } from 'svelte-feather-icons';
+  import * as Ledger from '$lib/Ledger';
+  import { putFileinFormData, wait } from '$lib/helpers';
   let uploads: File[] | [] = [];
 
   $: matches = [];
@@ -8,25 +11,18 @@
 
   const parseMatches = (res: string) => {
     const split = res.split(',');
-    matches = split.filter(e => e !== 'null');
-    notfounds = split.filter(e => e === 'nulll');
+    matches = [...matches, split.filter(e => e !== 'null')];
+    notfounds = [...notfounds, split.filter(e => e === 'nulll')];
   };
 
-  async function postFiles(payload: FormData) {
-    await fetch(`http://localhost:3000/verify`, {
-      method: 'POST',
-      body: payload,
-    })
-      .then(res => res.text())
-      .then(data => parseMatches(data));
-  }
-
-  async function handleSubmit(e: Event) {
-    const formData = new FormData();
-    for (const i in uploads) {
-      formData.append(uploads[i].name, uploads[i], uploads[i].name);
+  async function handleSubmit() {
+    for (let i = 0; i < uploads.length; i++) {
+      wait(200 * i)
+        .then(() => putFileinFormData(uploads[i]))
+        .then(form => Ledger.verifyFile(form))
+        .then(res => res.text())
+        .then(data => parseMatches(data));
     }
-    postFiles(formData);
   }
 </script>
 
@@ -54,7 +50,7 @@
   </p>
 
   <form on:submit|preventDefault={handleSubmit} class="col">
-    <FileDropzone accept="image/*" max={3} bind:files={uploads} />
+    <FileDropzone accept="image/*" max={10} bind:files={uploads} />
     {#if uploads.length > 0}
       <Button small type="submit"><CheckIcon size="1x" /> Submit</Button>
     {/if}
@@ -63,7 +59,8 @@
   <h3>Matches:</h3>
   <table>
     {#each matches as match}
-      <tr>
+      <tr in:fade>
+        <CheckIcon size="1x" />
         {match}
       </tr>
     {/each}

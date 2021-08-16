@@ -97,3 +97,15 @@ export async function postDocumentRevision(thing: FormData, id: string) {
     ledgerData.set(Ledger.fetchData());
   }
 }
+
+/**
+ * Sends a FormData containing a single File to the API
+ * @param payload a FormData containing a File
+ * @returns a promise of a response
+ */
+export async function verifyFile(payload: FormData): Promise<Response> {
+  return await fetch(`http://localhost:3000/verify`, {
+    method: 'POST',
+    body: payload,
+  });
+}

@@ -24,3 +24,14 @@ export const domainFromUrl = (url: string): string => {
  * @param h string, sha256
  **/
 export const shortHash = (h: string): string => h.substr(0, 6);
+
+export const putFileinFormData = (f: File): Promise<FormData> => {
+  return new Promise(resolve => {
+    const form = new FormData();
+    form.append(f.name, f, f.name);
+    resolve(form);
+  });
+};
+
+export const wait = (n: number) =>
+  new Promise(resolve => setTimeout(resolve, n));
