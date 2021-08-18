@@ -7,10 +7,10 @@
       "email": "niko@niko.io"
     }
   ],
-  "version": "0.6.1",
+  "version": "0.6.2",
   "repository": {
     "type": "git",
-    "url": "https://github.com/digitalevidencetoolkit/deptoolkit-node-api"
+    "url": "https://github.com/digitalevidencetoolkit/deptoolkit"
   },
   "license": "",
   "dependencies": {
