@@ -3,13 +3,16 @@ import { config } from 'dotenv';
 import { join } from 'path';
 import cors from 'cors';
 import sharp from 'sharp';
-import formidable, { Fields } from 'formidable';
+import formidable, { Fields, Files } from 'formidable';
 import chalk from 'chalk';
+import fs from 'fs/promises';
+import { parse } from 'path';
 
 import * as Ledger from './src/ledger';
 import * as Store from './src/store';
 import * as Bundle from './src/types/Bundle';
 import * as Record from './src/types/Record';
+import * as Verify from './src/verify';
 
 import { pprint, cleanupBase64 } from './src/helpers';
 
@@ -39,7 +42,7 @@ app.get(
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
     const result = await Ledger.listDocHistory(sku);
-    console.log(chalk.bold(`GET /history/${sku}`))
+    console.log(chalk.bold(`GET /history/${sku}`));
     return res.status(200).send(pprint(result));
   }
 );
@@ -52,8 +55,10 @@ app.get(
       root: join(__dirname, './out'),
       dotfiles: 'deny',
     };
-    await Ledger.getDoc(sku)
-      .then((r: Record.Record) => Store.makeZip(r))
+    // `sku` comes with .zip at the end, which we must remove
+    const cleanSku = parse(sku).name;
+    await Ledger.getDoc(cleanSku, 'id')
+      .then(r => Store.makeZip(r))
       .then(() =>
         res
           .set(`Content-Type`, `application/octet-stream`)
@@ -125,7 +130,7 @@ app.post(
   '/edit-description/:sku',
   async (req: Request, res: Response): Promise<Response> => {
     const { sku } = req.params;
-    console.log(chalk.bold(`POST /edit-description/${sku}`))
+    console.log(chalk.bold(`POST /edit-description/${sku}`));
     return new Promise((resolve, reject) => {
       const form = new formidable.IncomingForm();
       form.parse(req, async (err: Error, fields: Fields): Promise<void> => {
@@ -142,10 +147,37 @@ app.post(
   }
 );
 
+app.post('/verify', async (req: Request, res: Response): Promise<Response> => {
+  console.log(chalk.bold(`POST /verify`));
+  return new Promise((resolve, reject) => {
+    const form = new formidable.IncomingForm();
+    form.parse(req, async (err: Error, fields: Fields, files: Files) => {
+      // verify each file by opening it and sending it to check
+      // (which involves hashing and comparing to QLDB), then building
+      // the Response one file at a time and sending it once
+      Promise.all(
+        Object.keys(files).map(async i => {
+          await fs
+            // @ts-expect-error
+            .readFile(files[i].path)
+            .then(f => Verify.verifyFile(f))
+            .then(result =>
+              res.write(
+                result
+                  ? JSON.stringify(result)
+                  : JSON.stringify({ not_found: 'item not found' })
+              )
+            );
+        })
+      ).then(() => resolve(res.send()));
+    });
+  });
+});
+
 try {
   app.listen(port, (): void => {
     console.log(chalk.green(`Connected successfully on port ${port} 🚀`));
   });
 } catch (error) {
-    console.error(chalk.red(`❌ Error occured: ${error.message}`));
+  console.error(chalk.red(`❌ Error occured: ${error.message}`));
 }

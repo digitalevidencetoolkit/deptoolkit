@@ -31,8 +31,8 @@
   "scripts": {
     "start": "ts-node-dev ./index.ts",
     "server": "ts-node-dev ./index.ts",
-    "gui": "cd gui && npm run dev",
-    "all": "npm run server & npm run gui"
+    "ui": "cd ui && npm run dev",
+    "all": "npm run server &  npm run ui"
   },
   "devDependencies": {
     "@types/archiver": "^5.1.1",

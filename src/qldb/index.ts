@@ -80,11 +80,12 @@ export const listDocuments = async function (
 
 export const getOneDocument = async function (
   id: string,
+  column: string,
   tableName: string
 ): Promise<Result> {
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
-    const statement: string = `SELECT * FROM ${tableName} WHERE id='${id}'`;
+    const statement: string = `SELECT * FROM ${tableName} WHERE ${column}='${id}'`;
     let r = qldbDriver.executeLambda(async (txn: TransactionExecutor) => {
       let results = await txn.execute(statement);
       return results;

@@ -1,9 +1,10 @@
 <script lang="ts">
   import * as Ledger from './index';
+  import { fade } from 'svelte/transition';
   import type { LedgerEntry, OriginalTx } from './index';
-  import EditingPanel from './EditingPanel.svelte';
   import History from './History.svelte';
-  import { domainFromUrl, shortHash } from '../helpers';
+  import EditingPanel from './EditingPanel.svelte';
+  import { domainFromUrl, shortHash } from '$lib/helpers';
 
   //UI
   import { Button } from 'attractions';
@@ -32,7 +33,7 @@
   const isOdd = i % 2 === 0;
 </script>
 
-<style type="text/scss">
+<style lang="scss">
   pre {
     margin-top: 0;
     margin-bottom: 0;
@@ -51,7 +52,7 @@
   }
 
   section {
-    height: 220px;
+    height: 250px;
 
     &.even {
       background-color: #fbfbfb;
@@ -61,6 +62,7 @@
     img {
       width: 300px;
       height: 200px;
+      border: 1px solid #ddd;
     }
 
     .metadata {
@@ -75,9 +77,8 @@
       .hashes {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
         justify-content: space-between;
-        width: 250px;
+        width: 300px;
       }
     }
 
@@ -88,7 +89,7 @@
   }
 </style>
 
-<section class={isOdd === true ? 'odd' : 'even'}>
+<section class={isOdd === true ? 'odd' : 'even'} in:fade>
   <div class="thumbnail">
     {#if entry.thumb_hash}
       <img src={pathToThumbnail(entry.thumb_hash)} alt="" />

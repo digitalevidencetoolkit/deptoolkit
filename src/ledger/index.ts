@@ -3,7 +3,6 @@ import * as Annotations from '../types/Annotations';
 import type { Annotation } from '../types/Annotations';
 import * as QLDB from '../qldb';
 import { dom } from 'ion-js';
-import { parse } from 'path';
 
 import { Result } from 'amazon-qldb-driver-nodejs';
 
@@ -21,15 +20,19 @@ export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
     .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
 };
 
-export const getDoc = async (id: string): Promise<Record.Record> => {
-  // `id` comes with .zip at the end, which we must remove
-  const cleanID = parse(id).name;
+export const getDoc = async (
+  id: string,
+  col: string
+): Promise<Record.Record | null> => {
   const list: Result = await QLDB.getOneDocument(
-    cleanID,
+    id,
+    col,
     QLDB.Constants.doc_table_name
   );
   const result = list.getResultList();
-  return Record.fromLedger(result[0]);
+  if (result.length > 0) {
+    return Record.fromLedger(result[0]);
+  } else return null;
 };
 
 export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {
