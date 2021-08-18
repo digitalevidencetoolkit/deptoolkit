@@ -1,6 +1,9 @@
 {
   "name": "svelte-app",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=14.0"
+  },
   "private": true,
   "scripts": {
     "dev": "svelte-kit dev --port 8000",

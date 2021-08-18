@@ -12,6 +12,9 @@
     "type": "git",
     "url": "https://github.com/digitalevidencetoolkit/deptoolkit"
   },
+  "engines": {
+    "node": ">=14.0"
+  },
   "license": "",
   "dependencies": {
     "amazon-qldb-driver-nodejs": "^2.2.0",
