@@ -1,30 +1,29 @@
-# Digital Evidence Toolkit QLDB API
+# The Digital Evidence Preservation Toolkit
 
-# Install and development
+_(Or **DEPToolkit** for short. Bit of a mouthful otherwise)_
 
-## Docker
+A proof-of-concept software for researchers and small teams sifting through online material. With only one click of the mouse, the material will be **archived in a framework demonstrating chain of custody and stored durably**. Once included in the growing database, users will be able to go back to search through and **annotate the material**, and to **export working copies** of said material for publication and dissemination.
+
+A database built thusly can be handed to a prosecutor ten years down the line, and they will be able to say with mathematical certainty: “the material in this archive is identical and contemporary to the one saved at the time, ten years ago.”
+
+Built with the support of **Prototype Fund**, the **German Federal Ministry for Education and Research**, the **Open Knowledge Foundation**, and **Amazon Web Services**.
+
+### Architecture
+
+The Docker Compose orchestration is composed of several services:
+
+- An Express/TypeScript API,
+- A plain JS browser extension
+- And a frontend
+
+To start the whole app:
 
 ```sh
 $ docker-compose up
 ```
 
-This will start a REST API on port 3000 which includes the logic for interacting with the ledger, as well as a single-page web app on port 5000 which consumes data from the API and represents it visually.
+### Help & Contact
 
-## Node 
-
-To run everything without docker, you must install the necessary packages in `gui` and in this app.
-
-To do this, run:
-
-``` sh
-npm i
-cd gui
-npm i
-```
-
-Then, the command `npm run all` should start all of the necessary modules.
-
-## Usage
-
-Deliver data to the ledger with the [Digital Evidence Toolkit Firefox extension](https://github.com/digitalevidencetoolkit/firefox-extension).
-
+- [Getting started](https://digitalevidencetoolkit.notion.site/Getting-started-15521f4125534f4aa758a2575c27ad5c)
+- [Technical documentation](https://digitalevidencetoolkit.notion.site/The-Digital-Evidence-Preservation-Toolkit-71eca0486bed46878dc478248488d23f)
+- Email: basile at digitalevidencetoolkit dot org
