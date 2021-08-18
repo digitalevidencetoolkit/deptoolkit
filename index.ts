@@ -45,6 +45,25 @@ app.get(
 );
 
 app.get(
+  '/export-copy/:sku',
+  async (req: Request, res: Response): Promise<void> => {
+    const { sku } = req.params;
+    const options = {
+      root: join(__dirname, './out'),
+      dotfiles: 'deny',
+    };
+    await Ledger.getDoc(sku)
+      .then((r: Record.Record) => Store.makeZip(r))
+      .then(() =>
+        res
+          .set(`Content-Type`, `application/octet-stream`)
+          .set(`Content-Disposition`, `attachment; filename=${sku}`)
+          .sendFile(`${sku}`, options)
+      );
+  }
+);
+
+app.get(
   '/list-docs',
   async (req: Request, res: Response): Promise<Response> => {
     const result = await Ledger.listDocs();

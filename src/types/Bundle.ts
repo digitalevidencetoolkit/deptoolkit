@@ -20,9 +20,11 @@ export type newBundle = Array<File.newFile>;
  * @returns a Bundle, sorted alphabetically by its ID
  */
 const sortedBundle = (b: Bundle): Bundle => {
-  const sortedArray = [...b].sort((a, b) => File.id(a).localeCompare(File.id(b)));
+  const sortedArray = [...b].sort((a, b) =>
+    File.id(a).localeCompare(File.id(b))
+  );
   return sortedArray;
-}
+};
 
 /**
  * A bundle's ID is the sum of its composing parts' IDs (or hashes)

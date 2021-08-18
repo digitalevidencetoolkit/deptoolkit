@@ -78,6 +78,23 @@ export const listDocuments = async function (
   }
 };
 
+export const getOneDocument = async function (
+  id: string,
+  tableName: string
+): Promise<Result> {
+  try {
+    const qldbDriver: QldbDriver = getQldbDriver();
+    const statement: string = `SELECT * FROM ${tableName} WHERE id='${id}'`;
+    let r = qldbDriver.executeLambda(async (txn: TransactionExecutor) => {
+      let results = await txn.execute(statement);
+      return results;
+    });
+    return r;
+  } catch (e) {
+    console.log(`Unable to list documents in ${tableName}: ${e}`);
+  }
+};
+
 /**
  * Insert documents into a table in a QLDB ledger.
  * @param tableName Name of the table to insert documents into.
