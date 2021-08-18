@@ -28,7 +28,6 @@
       "matches": ["<all_urls>"],
       "run_at": "document_start",
       "js": [
-        "single-file/dist/chrome-browser-polyfill.js",
         "single-file/dist/single-file-frames.js",
         "single-file/dist/extension-frames.js"
       ],
@@ -39,7 +38,6 @@
       "matches": ["<all_urls>"],
       "run_at": "document_start",
       "js": [
-        "single-file/dist/chrome-browser-polyfill.js",
         "single-file/dist/single-file-bootstrap.js",
         "single-file/dist/extension-core.js",
         "single-file/dist/single-file.js"

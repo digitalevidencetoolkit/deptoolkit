@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "allowJs": true,
     "strict": true,
     "strictNullChecks": false,
     "esModuleInterop": true,

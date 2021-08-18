@@ -3,7 +3,6 @@ import * as Annotations from '../types/Annotations';
 import type { Annotation } from '../types/Annotations';
 import * as QLDB from '../qldb';
 import { dom } from 'ion-js';
-import { parse } from 'path';
 
 import { Result } from 'amazon-qldb-driver-nodejs';
 
@@ -22,18 +21,17 @@ export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
 };
 
 export const getDoc = async (
-  id: string
-): Promise<Record.FrontEndRecord[] | null> => {
+  id: string,
+  col: string
+): Promise<Record.Record | null> => {
   const list: Result = await QLDB.getOneDocument(
     id,
-    'screenshot',
+    col,
     QLDB.Constants.doc_table_name
   );
   const result = list.getResultList();
   if (result.length > 0) {
-    return result
-      .map(e => Record.fromLedger(e))
-      .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
+    return Record.fromLedger(result[0]);
   } else return null;
 };
 

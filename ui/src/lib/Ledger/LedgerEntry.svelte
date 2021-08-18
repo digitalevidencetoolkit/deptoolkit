@@ -1,7 +1,8 @@
 <script lang="ts">
   import * as Ledger from './index';
   import { fade } from 'svelte/transition';
-  import type { LedgerEntry, EntryHistory } from './index';
+  import type { LedgerEntry, OriginalTx } from './index';
+  import History from './History.svelte';
   import EditingPanel from './EditingPanel.svelte';
   import { domainFromUrl, shortHash } from '$lib/helpers';
 
@@ -21,7 +22,7 @@
   export let i: number;
   let showEditingPanel: boolean = false;
 
-  let originalTX: null | EntryHistory = null;
+  let originalTX: null | OriginalTx = null;
   $: if (entry.history) {
     originalTX = Ledger.getOriginalTX(entry.history);
   }
@@ -113,6 +114,7 @@
     </div>
 
     {#if entry.history}
+      <History history={entry.history} />
       <pre><ClockIcon size="1x" /> Added on <b>{originalTX.originalTxDate}, {originalTX.originalTxTime}</b></pre>
     {/if}
 
@@ -134,5 +136,9 @@
     {#if showEditingPanel === true}
       <EditingPanel {entry} />
     {/if}
+
+    <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}
+      ><pre><EditIcon size="1x" /> Download ZIP</pre></Button
+    >
   </div>
 </section>

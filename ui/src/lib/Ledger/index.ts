@@ -1,4 +1,3 @@
-import * as Ledger from './index';
 export { default as LedgerEntryComponent } from './LedgerEntry.svelte';
 import { ledgerData } from '../stores';
 
@@ -13,7 +12,7 @@ export type LedgerEntry = {
   description?: string;
 };
 
-export type EntryHistory = {
+export type OriginalTx = {
   originalTxDate: string;
   originalTxTime: string;
 };
@@ -71,9 +70,12 @@ export async function addHistoryTo(entry: LedgerEntry) {
   });
 }
 
-export const getOriginalTX = (h: QLDBHistory): EntryHistory => {
+export const getTXDateFromBlock = (b: QLDBHistoryItem): Date =>
+  new Date(b.metadata.txTime);
+
+export const getOriginalTX = (h: QLDBHistory): OriginalTx => {
   const originalTx = h[0];
-  const originalTxDate = new Date(originalTx.metadata.txTime);
+  const originalTxDate = getTXDateFromBlock(originalTx);
   return {
     originalTxDate: originalTxDate.toDateString(),
     originalTxTime: originalTxDate.toLocaleTimeString(),
@@ -94,7 +96,7 @@ export async function postDocumentRevision(thing: FormData, id: string) {
 
   // @TODO: implement store.update() to avoid a full page refresh
   if (res.ok === true) {
-    ledgerData.set(Ledger.fetchData());
+    ledgerData.set(fetchData());
   }
 }
 
@@ -109,3 +111,14 @@ export async function verifyFile(payload: FormData): Promise<Response> {
     body: payload,
   });
 }
+
+export async function requestWorkingCopy(sku: string) {
+  downloadAFile(`http://localhost:3000/export-copy/${sku}.zip`, `${sku}.zip`);
+}
+
+const downloadAFile = (fileUrl: string, fileName: string) => {
+  const a = document.createElement('a');
+  a.href = fileUrl;
+  a.setAttribute('download', fileName);
+  a.click();
+};

@@ -1,8 +1,13 @@
 import * as fs from 'fs';
+import { join } from 'path';
+import 'archiver';
 import { mkdir } from 'fs/promises';
 import { makeHash } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
+import * as Record from '../types/Record';
+import archiver from 'archiver';
+import { resolve } from 'path/posix';
 // import * as s3storage from s3storage
 
 const config = {
@@ -54,6 +59,57 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
  **/
 export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
   return Promise.all(b.map(writeOne));
+};
+
+const makeSidecarTextFile = (r: Record.Record): string => {
+  const screenshot = r.bundle.find(e => e.kind === 'screenshot').hash + '.png';
+  const one_file = r.bundle.find(e => e.kind === 'one_file').hash + '.html';
+  return `THE DIGITAL EVIDENCE PRESERVATION TOOLKIT \r\n \
+  ============ \r\n \
+  Working copy export generated on ${Date.now()} \r\n \
+  \r\n \
+  ${r.data.title} \r\n \
+  ${r.data.url}\r\n \
+  \r\n \
+  Files included:
+    ${screenshot}\r\n \
+   ${one_file}`;
+};
+
+/**
+ * Builds a ZIP file from a bundle
+ * @param b a Bundle, i.e. a list of Files
+ * @returns  a promise
+ */
+export const makeZip = (r: Record.Record): Promise<void> => {
+  const b = r.bundle;
+  const zip = archiver('zip', { zlib: { level: 0 } });
+  const out = `out/${Bundle.id(b)}.zip`;
+  const stream = fs.createWriteStream(out);
+  const root = join(__dirname, '../../out');
+
+  // presently the ZIP file only includes the full screenshot and one-file
+  // HTML archive. isolating them like so isn't the most elegant.
+  // maybe replace with a function from `Bundle`?
+  const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
+  const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
+  const sidecarTextFile = makeSidecarTextFile(r);
+
+  return new Promise<void>((resolve, reject) => {
+    stream.on('close', () => {
+      console.log(`${zip.pointer()} bytes written`);
+      resolve();
+    });
+    zip
+      .append(fs.createReadStream(`${root}/${screenshot}`), {
+        name: screenshot,
+      })
+      .append(fs.createReadStream(`${root}/${one_file}`), { name: one_file })
+      .append(sidecarTextFile, { name: `about-this-export.txt` })
+      .on('error', err => reject(err))
+      .pipe(stream);
+    zip.finalize();
+  });
 };
 
 /**

@@ -6,6 +6,7 @@ import sharp from 'sharp';
 import formidable, { Fields, Files } from 'formidable';
 import chalk from 'chalk';
 import fs from 'fs/promises';
+import { parse } from 'path';
 
 import * as Ledger from './src/ledger';
 import * as Store from './src/store';
@@ -43,6 +44,27 @@ app.get(
     const result = await Ledger.listDocHistory(sku);
     console.log(chalk.bold(`GET /history/${sku}`));
     return res.status(200).send(pprint(result));
+  }
+);
+
+app.get(
+  '/export-copy/:sku',
+  async (req: Request, res: Response): Promise<void> => {
+    const { sku } = req.params;
+    const options = {
+      root: join(__dirname, './out'),
+      dotfiles: 'deny',
+    };
+    // `sku` comes with .zip at the end, which we must remove
+    const cleanSku = parse(sku).name;
+    await Ledger.getDoc(cleanSku, 'id')
+      .then(r => Store.makeZip(r))
+      .then(() =>
+        res
+          .set(`Content-Type`, `application/octet-stream`)
+          .set(`Content-Disposition`, `attachment; filename=${sku}`)
+          .sendFile(`${sku}`, options)
+      );
   }
 );
 
@@ -142,7 +164,7 @@ app.post('/verify', async (req: Request, res: Response): Promise<Response> => {
             .then(result =>
               res.write(
                 result
-                  ? JSON.stringify(result[0])
+                  ? JSON.stringify(result)
                   : JSON.stringify({ not_found: 'item not found' })
               )
             );
