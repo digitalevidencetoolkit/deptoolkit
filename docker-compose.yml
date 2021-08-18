@@ -27,6 +27,19 @@ services:
       - app
     depends_on:
       - endpoint
+  
+  extension:
+    build:
+      context: extension/
+      dockerfile: Dockerfile
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+    networks:
+      - app
+    depends_on:
+      - endpoint
 
 networks:
   app:
