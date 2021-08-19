@@ -32,7 +32,9 @@ export const getDoc = async (
   const result = list.getResultList();
   if (result.length > 0) {
     return Record.fromLedger(result[0]);
-  } else return null;
+  } else {
+    return null;
+  }
 };
 
 export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {

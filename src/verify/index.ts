@@ -13,12 +13,17 @@ export const verifyFile = (f: Buffer): Promise<Record.FrontEndRecord | null> =>
     await Ledger.getDoc(hash, 'screenshot')
       .then(
         (doc: Record.Record): Promise<Record.Record> =>
-          new Promise(resolve => {
-            if (doc != null) resolve(doc);
+          new Promise((resolve, reject) => {
+            if (doc != null) {
+              resolve(doc);
+            } else {
+              reject();
+            }
           })
       )
       .then(r => Record.toFrontend(r))
       .then(match => {
         resolve(match ? match : null);
-      });
+      })
+      .catch(err => resolve(err));
   });
