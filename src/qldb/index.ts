@@ -6,12 +6,6 @@ import {
 } from 'amazon-qldb-driver-nodejs';
 import { ClientConfiguration } from 'aws-sdk/clients/qldbsession';
 
-export const Constants = {
-  ledger_name: 'deptoolkit',
-  doc_table_name: 'Document',
-  doc_index_key: 'sku',
-};
-
 const qldbDriver: QldbDriver = createQldbDriver();
 
 /**
@@ -21,7 +15,7 @@ const qldbDriver: QldbDriver = createQldbDriver();
  * @returns The driver for creating sessions.
  */
 function createQldbDriver(
-  ledgerName: string = Constants.ledger_name,
+  ledgerName: string = process.env.LEDGER_NAME,
   serviceConfigurationOptions: ClientConfiguration = { region: 'eu-central-1' }
 ): QldbDriver {
   const retryLimit = 4;
@@ -160,7 +154,7 @@ async function getDocumentIdByField(
 export const queryHistoryOfDocument = async function (
   sku: string
 ): Promise<Result> {
-  const tableName = Constants.doc_table_name;
+  const tableName = process.env.DOC_TABLE_NAME;
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `SELECT * from history (${tableName}) AS h WHERE h.metadata.id = ?`;

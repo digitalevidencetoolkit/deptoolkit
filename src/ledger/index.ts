@@ -9,11 +9,11 @@ import { Result } from 'amazon-qldb-driver-nodejs';
 export const insertDoc = (r: Record.Record): Promise<Result | void> =>
   Record.validate(r)
     .then(Record.toLedger)
-    .then(dbItem => QLDB.insertDocuments(QLDB.Constants.doc_table_name, dbItem))
+    .then(dbItem => QLDB.insertDocuments(process.env.DOC_TABLE_NAME, dbItem))
     .catch(err => console.log(`${err.name}: ${err.errors}`));
 
 export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
-  const list: Result = await QLDB.listDocuments(QLDB.Constants.doc_table_name);
+  const list: Result = await QLDB.listDocuments(process.env.DOC_TABLE_NAME);
   const result = list.getResultList();
   return result
     .map(e => Record.fromLedger(e))
@@ -27,7 +27,7 @@ export const getDoc = async (
   const list: Result = await QLDB.getOneDocument(
     id,
     col,
-    QLDB.Constants.doc_table_name
+    process.env.DOC_TABLE_NAME
   );
   const result = list.getResultList();
   if (result.length > 0) {
@@ -45,7 +45,7 @@ export const updateDoc = async (sku: string, data: Annotation) => {
   Annotations.validate(data)
     .then(annotation => annotation.description)
     .then(description =>
-      QLDB.updateDocument(QLDB.Constants.doc_table_name, description, sku)
+      QLDB.updateDocument(process.env.DOC_TABLE_NAME, description, sku)
     )
     .catch(err => console.log(`${err.name}: ${err.errors}`));
 };
