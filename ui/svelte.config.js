@@ -11,7 +11,17 @@ const config = {
       pages: 'out/',
       assets: 'out/',
     }),
-    vite: () => ({ clearScreen: false }),
+    vite: () => ({
+      clearScreen: false,
+      server: {
+        proxy: {
+          '/api': {
+            target: 'http://localhost:3000',
+            rewrite: path => path.replace(/^\/api/, ''),
+          },
+        },
+      },
+    }),
   },
 };
 
