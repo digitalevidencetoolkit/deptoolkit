@@ -2,7 +2,7 @@ name: CI
 on: push
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-latest
     
     steps:
@@ -10,4 +10,4 @@ jobs:
     - name: Install modules
       run: npm install
     - name: Run tests
-      run: npm run testw
+      run: npm run test
