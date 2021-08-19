@@ -7,7 +7,6 @@ import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
 import archiver from 'archiver';
-import { resolve } from 'path/posix';
 // import * as s3storage from s3storage
 
 const config = {
