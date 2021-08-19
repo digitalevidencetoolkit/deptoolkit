@@ -4,9 +4,11 @@ import {
   TransactionExecutor,
   RetryConfig,
 } from 'amazon-qldb-driver-nodejs';
+import { config } from 'dotenv';
 import { ClientConfiguration } from 'aws-sdk/clients/qldbsession';
 
-const qldbDriver: QldbDriver = createQldbDriver();
+config();
+const qldbDriver: QldbDriver = createQldbDriver(process.env.LEDGER_NAME);
 
 /**
  * Create a driver for creating sessions.
@@ -15,8 +17,10 @@ const qldbDriver: QldbDriver = createQldbDriver();
  * @returns The driver for creating sessions.
  */
 function createQldbDriver(
-  ledgerName: string = process.env.LEDGER_NAME,
-  serviceConfigurationOptions: ClientConfiguration = { region: 'eu-central-1' }
+  ledgerName: string,
+  serviceConfigurationOptions: ClientConfiguration = {
+    region: process.env.AWS_REGION,
+  }
 ): QldbDriver {
   const retryLimit = 4;
   const maxConcurrentTransactions = 10;
