@@ -27,8 +27,7 @@
     originalTX = Ledger.getOriginalTX(entry.history);
   }
 
-  const pathToThumbnail = (path: string): string =>
-    `/file/${path}.png`;
+  const pathToThumbnail = (path: string): string => `/api/file/${path}.png`;
 
   const isOdd = i % 2 === 0;
 </script>

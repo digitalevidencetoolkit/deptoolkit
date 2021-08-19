@@ -18,9 +18,11 @@ services:
       context: ui/
       dockerfile: Dockerfile
     ports:
-      - '8000:8000'
+      - '8000:80'
     networks:
       - app
+    depends_on:
+      - endpoint
 
   # extension:
   #   build:
@@ -34,19 +36,6 @@ services:
   #     - app
   #   depends_on:
   #     - endpoint
-
-  nginx:
-    restart: always
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    networks:
-      - app
-    ports:
-      - '80:80'
-    depends_on:
-      - ui
-      - endpoint
 
 networks:
   app:
