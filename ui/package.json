@@ -12,6 +12,7 @@
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
+    "@sveltejs/adapter-node": "^1.0.0-next.43",
     "@sveltejs/kit": "next",
     "@types/cookie": "^0.4.0",
     "attractions": "^3.3.0",
