@@ -61,19 +61,22 @@ export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
   return Promise.all(b.map(writeOne));
 };
 
-const makeSidecarTextFile = (r: Record.Record): string => {
+/**
+ * Generates a string describing the specified Record `r`.
+ */
+export const generateAboutString = (r: Record.Record): string => {
   const screenshot = r.bundle.find(e => e.kind === 'screenshot').hash + '.png';
   const one_file = r.bundle.find(e => e.kind === 'one_file').hash + '.html';
-  return `THE DIGITAL EVIDENCE PRESERVATION TOOLKIT \r\n \
-  ============ \r\n \
-  Working copy export generated on ${Date.now()} \r\n \
-  \r\n \
-  ${r.data.title} \r\n \
-  ${r.data.url}\r\n \
-  \r\n \
-  Files included:
-    ${screenshot}\r\n \
-   ${one_file}`;
+  return `THE DIGITAL EVIDENCE PRESERVATION TOOLKIT
+============
+Working copy export generated on ${Date.now()}
+
+${r.data.title}
+${r.data.url}
+
+Files included:
+  ${screenshot}
+  ${one_file}`;
 };
 
 /**
@@ -93,7 +96,7 @@ export const makeZip = (r: Record.Record): Promise<void> => {
   // maybe replace with a function from `Bundle`?
   const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
   const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
-  const sidecarTextFile = makeSidecarTextFile(r);
+  const sidecarTextFile = generateAboutString(r);
 
   return new Promise<void>((resolve, reject) => {
     stream.on('close', () => {
