@@ -10,4 +10,4 @@ jobs:
     - name: Install modules
       run: npm install
     - name: Run tests
-      run: npm run test
+      run: npm run testw
