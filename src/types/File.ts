@@ -12,3 +12,11 @@ export type newFile = { kind: Process; data: Buffer | string };
  * @returns string
  */
 export const id = (a: File) => a.hash;
+
+/**
+ * Generates a complete filename from a given file.
+ * @returns A complete filename, with the correct extention according to the
+ * file's kind.
+ */
+export const fileName: (f: File) => string = ({ kind, hash }) =>
+  `${hash}.${kind === 'one_file' ? 'html' : 'png'}`;
