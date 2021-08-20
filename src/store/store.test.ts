@@ -4,8 +4,10 @@ import Zip from 'node-stream-zip';
 
 import type { Bundle } from '../types/Bundle';
 import type { Record } from '../types/Record';
+import type { File } from '../types/File';
 
 import * as Store from './index';
+import { fileName } from '../types/File';
 import { id } from '../types/Bundle';
 
 describe('generateAboutString', () => {
@@ -35,16 +37,13 @@ describe('generateAboutString', () => {
   it('should generate a string describing the given bundle', () => {
     const title = 'Win big money in no time thanks to this one simple trick';
     const url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-    const oneFile = 'this-is-the-file';
-    const screenshot = 'pretty-picture';
+    const oneFile: File = { hash: 'this-is-the-file', kind: 'one_file' };
+    const screenshot: File = { hash: 'pretty-picture', kind: 'screenshot' };
     const ogNow = Date.now;
     Date.now = () => 42;
 
     const result = Store.generateAboutString({
-      bundle: [
-        { hash: oneFile, kind: 'one_file' },
-        { hash: screenshot, kind: 'screenshot' },
-      ],
+      bundle: [oneFile, screenshot],
       annotations: {
         description: '',
       },
@@ -62,8 +61,8 @@ ${title}
 ${url}
 
 Files included:
-  ${screenshot}.png
-  ${oneFile}.html`;
+  ${fileName(screenshot)}
+  ${fileName(oneFile)}`;
 
     expect(result).toEqual(expected);
 
@@ -116,11 +115,13 @@ describe('makeZip', () => {
   });
 
   it('should produce a zip of the given record, in the correct location', async () => {
-    const oneFileHash = 'this-is-the-file';
-    const screenshotHash = 'pretty-picture';
+    const oneFile: File = { hash: 'this-is-the-file', kind: 'one_file' };
+    const screenshot: File = { hash: 'pretty-picture', kind: 'screenshot' };
+    const oneFileName = fileName(oneFile);
+    const screenshotName = fileName(screenshot);
 
-    fs.writeFileSync(path.join(bundleRootDir, `${oneFileHash}.html`), 'jeej');
-    fs.writeFileSync(path.join(bundleRootDir, `${screenshotHash}.png`), 'tuut');
+    fs.writeFileSync(path.join(bundleRootDir, oneFileName), 'jeej');
+    fs.writeFileSync(path.join(bundleRootDir, screenshotName), 'tuut');
 
     const record: Record = {
       data: {
@@ -130,10 +131,7 @@ describe('makeZip', () => {
       annotations: {
         description: 'A cat farting an infinite rainbow',
       },
-      bundle: [
-        { kind: 'one_file', hash: oneFileHash },
-        { kind: 'screenshot', hash: screenshotHash },
-      ],
+      bundle: [oneFile, screenshot],
     };
 
     await Store.makeZip(record, bundleRootDir, outDir);
@@ -146,20 +144,22 @@ describe('makeZip', () => {
     const z = new Zip.async({ file: zipPath });
     const entries = await z.entries();
     expect(entries).toEqual({
-      [`${oneFileHash}.html`]: expect.any(Object),
-      [`${screenshotHash}.png`]: expect.any(Object),
+      [oneFileName]: expect.any(Object),
+      [screenshotName]: expect.any(Object),
       'about-this-export.txt': expect.any(Object),
     });
     z.close();
   });
 
   it('should return a rejected promise when a file is missing on disk', async () => {
-    const oneFileHash = 'this-is-the-file';
-    const screenshotHash = 'pretty-picture';
+    const oneFile: File = { hash: 'this-is-the-file', kind: 'one_file' };
+    const screenshot: File = { hash: 'pretty-picture', kind: 'screenshot' };
+    const oneFileName = fileName(oneFile);
+    const screenshotName = fileName(screenshot);
 
     // simulate a missing file
-    // fs.writeFileSync(path.join(bundleRootDir, `${oneFileHash}.html`), 'jeej');
-    fs.writeFileSync(path.join(bundleRootDir, `${screenshotHash}.png`), 'tuut');
+    // fs.writeFileSync(path.join(bundleRootDir, oneFileName), 'jeej');
+    fs.writeFileSync(path.join(bundleRootDir, screenshotName), 'tuut');
 
     const record: Record = {
       data: {
@@ -169,10 +169,7 @@ describe('makeZip', () => {
       annotations: {
         description: 'A cat farting an infinite rainbow',
       },
-      bundle: [
-        { kind: 'one_file', hash: oneFileHash },
-        { kind: 'screenshot', hash: screenshotHash },
-      ],
+      bundle: [oneFile, screenshot],
     };
 
     await Store.makeZip(record, bundleRootDir, outDir)
