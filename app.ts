@@ -19,6 +19,8 @@ import { pprint, cleanupBase64 } from './src/helpers';
 // set up .env variables as environment variables
 config();
 
+const outDir = join(__dirname, './out');
+
 const app: Application = express();
 
 app.use(cors());
@@ -30,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
   const { sku } = req.params;
   const options = {
-    root: join(__dirname, './out'),
+    root: outDir,
     dotfiles: 'deny',
   };
   res.sendFile(`${sku}`, options);
@@ -50,7 +52,7 @@ app.get(
   '/export-copy/:sku',
   async (req: Request, res: Response): Promise<void> => {
     const { sku } = req.params;
-    const rootDir = join(__dirname, './out');
+    const rootDir = outDir;
     const options = {
       root: rootDir,
       dotfiles: 'deny',
@@ -101,7 +103,9 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       };
       const onefile = { kind: 'one_file' as const, data: onefileData };
 
-      await Store.newBundle([screenshot, thumbnail, onefile])
+      await Store.newBundle([screenshot, thumbnail, onefile], {
+        directory: outDir,
+      })
         .then((bundle: Bundle.Bundle) => {
           const record = {
             bundle,

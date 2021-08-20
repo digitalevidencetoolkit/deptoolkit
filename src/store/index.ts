@@ -8,13 +8,9 @@ import * as Record from '../types/Record';
 import archiver from 'archiver';
 // import * as s3storage from s3storage
 
-const config = {
-  storage: {
-    // s3: { ...s3 config}
-    filesystem: {
-      directory: './out',
-    },
-  },
+type WriteConfiguration = {
+  directory: string;
+  // s3: ...
 };
 
 /**
@@ -32,31 +28,48 @@ const writeToDisk = (b: Buffer | string, path: string): Promise<void> =>
   );
 
 /**
- * Logic for saving a file to disk from a storage config object
- * @param a a newFile, made of a buffer or of a string of HTML code
- * @returns a promise of a File, having been written to disk
+ * Write the specified `newFile` to disk, according to the specified
+ * `configuration`.
+ *
+ * If the same file is written twice, the old version is replaced silently.
+ *
+ * @param newFile object holding and describing the data to be written
+ * @param configuration object describing how the new file should be written
+ * @returns a promise for the resulting file, resolving once the write is
+ * complete.
  **/
-export const writeOne = async (a: File.NewFile): Promise<File.File> => {
-  const dir = config?.storage?.filesystem?.directory;
-  if (!dir) {
-    throw new Error(`No directory set in config`);
-  }
+const writeOne = async (
+  newFile: File.NewFile,
+  configuration: WriteConfiguration
+): Promise<File.File> => {
+  const { directory } = configuration;
   // create the directory if it does not yet exist
-  await mkdir(dir, { recursive: true });
-  const name = makeHash(a.data);
-  const format = a.kind === 'one_file' ? 'html' : 'png';
-  const path = `${dir}/${name}.${format}`;
-  await writeToDisk(a.data, path);
-  return { kind: a.kind, hash: name };
+  await mkdir(directory, { recursive: true });
+  const name = makeHash(newFile.data);
+  const format = newFile.kind === 'one_file' ? 'html' : 'png';
+  const path = `${directory}/${name}.${format}`;
+  await writeToDisk(newFile.data, path);
+  return { kind: newFile.kind, hash: name };
 };
 
 /**
- * Writes base64 data to files
- * @param b a NewBundle, made of base64 string data
- * @returns a promise of a Bundle, made of files written to disk
+ * Writes to disk the data contained in the specified `newBundle`, following the
+ * specified `configuration`.
+ *
+ * If the same new bundle is written twice (or part of a new bundle is
+ * re-written as part of another new bundle), the relevant files are replaced
+ * silently.
+ *
+ * @param newBundle a NewBundle, made of base64 string data
+ * @param configuration object describing how to write the new bundle
+ * @returns a promise for the resulting bundle, resolving once the write is
+ * complete.
  **/
-export const newBundle = (b: Bundle.NewBundle): Promise<Bundle.Bundle> => {
-  return Promise.all(b.map(writeOne));
+export const newBundle = (
+  newBundle: Bundle.NewBundle,
+  configuration: WriteConfiguration
+): Promise<Bundle.Bundle> => {
+  return Promise.all(newBundle.map(nb => writeOne(nb, configuration)));
 };
 
 /**
