@@ -36,7 +36,7 @@ const writeToDisk = (b: Buffer | string, path: string): Promise<void> =>
  * @param a a newFile, made of a buffer or of a string of HTML code
  * @returns a promise of a File, having been written to disk
  **/
-export const writeOne = async (a: File.newFile): Promise<File.File> => {
+export const writeOne = async (a: File.NewFile): Promise<File.File> => {
   const dir = config?.storage?.filesystem?.directory;
   if (!dir) {
     throw new Error(`No directory set in config`);
@@ -55,7 +55,7 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
  * @param b a NewBundle, made of base64 string data
  * @returns a promise of a Bundle, made of files written to disk
  **/
-export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
+export const newBundle = (b: Bundle.NewBundle): Promise<Bundle.Bundle> => {
   return Promise.all(b.map(writeOne));
 };
 
