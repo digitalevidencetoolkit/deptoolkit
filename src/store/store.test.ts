@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import Zip from 'node-stream-zip';
 
 import type { Bundle } from '../types/Bundle';
 import type { Record } from '../types/Record';
@@ -137,7 +138,18 @@ describe('makeZip', () => {
 
     await Store.makeZip(record, bundleRootDir, outDir);
 
-    // check for the zip's existence (would throw if it didn't exist)
-    fs.statSync(path.join(outDir, `${id(record.bundle)}.zip`));
+    const zipPath = path.join(outDir, `${id(record.bundle)}.zip`);
+
+    // check for the zip's existence and contents
+    // TODO: for this test to be complete, we should also check the files
+    // contents themselves.
+    const z = new Zip.async({ file: zipPath });
+    const entries = await z.entries();
+    expect(entries).toEqual({
+      [`${oneFileHash}.html`]: expect.any(Object),
+      [`${screenshotHash}.png`]: expect.any(Object),
+      'about-this-export.txt': expect.any(Object),
+    });
+    z.close();
   });
 });
