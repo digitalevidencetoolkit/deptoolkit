@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import { join } from 'path';
 import 'archiver';
 import { mkdir } from 'fs/promises';
 import { makeHash } from '../helpers';
@@ -96,7 +95,7 @@ Files included:
 export const makeZip = (
   r: Record.Record,
   bundleRootDirectory: string,
-  outDirectory: fs.PathLike
+  outDirectory: string
 ): Promise<void> => {
   const b = r.bundle;
   const zip = archiver('zip', { zlib: { level: 0 } });
