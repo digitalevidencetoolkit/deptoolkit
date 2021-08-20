@@ -15,7 +15,7 @@ export const id = (a: File) => a.hash;
 
 /**
  * Generates a complete filename from a given file.
- * @returns A complete filename, with the correct extention according to the
+ * @returns A complete filename, with the correct extension according to the
  * file's kind.
  */
 export const fileName: (f: File) => string = ({ kind, hash }) =>
