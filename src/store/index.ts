@@ -43,11 +43,16 @@ export const writeOne = async (a: File.newFile): Promise<File.File> => {
   }
   // create the directory if it does not yet exist
   await mkdir(dir, { recursive: true });
-  const name = makeHash(a.data);
-  const format = a.kind === 'one_file' ? 'html' : 'png';
-  const path = `${dir}/${name}.${format}`;
-  await writeToDisk(a.data, path);
-  return { kind: a.kind, hash: name };
+
+  const { kind, data } = a;
+
+  const hash = makeHash(data);
+  const result: File.File = { kind, hash };
+
+  const path = `${dir}/${File.fileName(result)}`;
+  await writeToDisk(data, path);
+
+  return result;
 };
 
 /**
@@ -63,8 +68,9 @@ export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
  * Generates a string describing the specified Record `r`.
  */
 export const generateAboutString = (r: Record.Record): string => {
-  const screenshot = r.bundle.find(e => e.kind === 'screenshot').hash + '.png';
-  const one_file = r.bundle.find(e => e.kind === 'one_file').hash + '.html';
+  const screenshot = File.fileName(r.bundle.find(e => e.kind === 'screenshot'));
+  const one_file = File.fileName(r.bundle.find(e => e.kind === 'one_file'));
+
   return `THE DIGITAL EVIDENCE PRESERVATION TOOLKIT
 ============
 Working copy export generated on ${Date.now()}
@@ -105,8 +111,8 @@ export const makeZip = (
     // presently the ZIP file only includes the full screenshot and one-file
     // HTML archive. isolating them like so isn't the most elegant.
     // maybe replace with a function from `Bundle`?
-    const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
-    const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
+    const screenshotName = File.fileName(b.find(e => e.kind === 'screenshot'));
+    const one_fileName = File.fileName(b.find(e => e.kind === 'one_file'));
     const sidecarTextFile = generateAboutString(r);
 
     const stream = fs.createWriteStream(out);
@@ -121,18 +127,18 @@ export const makeZip = (
     zip
       .append(
         fs
-          .createReadStream(`${bundleRootDirectory}/${screenshot}`)
+          .createReadStream(`${bundleRootDirectory}/${screenshotName}`)
           .on('error', reject),
         {
-          name: screenshot,
+          name: screenshotName,
         }
       )
       .append(
         fs
-          .createReadStream(`${bundleRootDirectory}/${one_file}`)
+          .createReadStream(`${bundleRootDirectory}/${one_fileName}`)
           .on('error', reject),
         {
-          name: one_file,
+          name: one_fileName,
         }
       )
       .append(sidecarTextFile, { name: `about-this-export.txt` })
