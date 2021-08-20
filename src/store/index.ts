@@ -79,34 +79,53 @@ Files included:
 };
 
 /**
- * Builds a ZIP file from a bundle
- * @param b a Bundle, i.e. a list of Files
- * @returns  a promise
+ * Builds a ZIP file from the specified Record `r`, in the specified
+ * `outDirectory`. The produced file will use the record's bundle id (as produced
+ * by `Bundle.id`) as its name, and will be located in the specified
+ * `outDirectory`. The function will use the specified `bundleRootDirectory` as the root
+ * where to read the files listed in `r`.
+ *
+ * The behaviour is unspecified unless:
+ * - `r` specifies one 'one_file' and one 'screenshot' files
+ * - the screenshot and one_file files exist and can be read in `bundleRootDirectory`
+ * - `outDirectory` exists and is writable
+ *
+ * @returns a promise resolving once the ZIP file has been created, or rejecting
+ * if an error happened.
  */
-export const makeZip = (r: Record.Record): Promise<void> => {
+export const makeZip = (
+  r: Record.Record,
+  bundleRootDirectory: string,
+  outDirectory: fs.PathLike
+): Promise<void> => {
   const b = r.bundle;
   const zip = archiver('zip', { zlib: { level: 0 } });
-  const out = `out/${Bundle.id(b)}.zip`;
-  const stream = fs.createWriteStream(out);
-  const root = join(__dirname, '../../out');
-
-  // presently the ZIP file only includes the full screenshot and one-file
-  // HTML archive. isolating them like so isn't the most elegant.
-  // maybe replace with a function from `Bundle`?
-  const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
-  const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
-  const sidecarTextFile = generateAboutString(r);
+  const out = `${outDirectory}/${Bundle.id(b)}.zip`;
 
   return new Promise<void>((resolve, reject) => {
+    // presently the ZIP file only includes the full screenshot and one-file
+    // HTML archive. isolating them like so isn't the most elegant.
+    // maybe replace with a function from `Bundle`?
+    const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
+    const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
+    const sidecarTextFile = generateAboutString(r);
+
+    const stream = fs.createWriteStream(out);
+    stream.on('error', e => {
+      console.error(e);
+      reject();
+    });
     stream.on('close', () => {
       console.log(`${zip.pointer()} bytes written`);
       resolve();
     });
     zip
-      .append(fs.createReadStream(`${root}/${screenshot}`), {
+      .append(fs.createReadStream(`${bundleRootDirectory}/${screenshot}`), {
         name: screenshot,
       })
-      .append(fs.createReadStream(`${root}/${one_file}`), { name: one_file })
+      .append(fs.createReadStream(`${bundleRootDirectory}/${one_file}`), {
+        name: one_file,
+      })
       .append(sidecarTextFile, { name: `about-this-export.txt` })
       .on('error', err => reject(err))
       .pipe(stream);

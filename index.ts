@@ -51,14 +51,15 @@ app.get(
   '/export-copy/:sku',
   async (req: Request, res: Response): Promise<void> => {
     const { sku } = req.params;
+    const rootDir = join(__dirname, './out');
     const options = {
-      root: join(__dirname, './out'),
+      root: rootDir,
       dotfiles: 'deny',
     };
     // `sku` comes with .zip at the end, which we must remove
     const cleanSku = parse(sku).name;
     await Ledger.getDoc(cleanSku, 'id')
-      .then(r => Store.makeZip(r))
+      .then(r => Store.makeZip(r, rootDir, rootDir))
       .then(() =>
         res
           .set(`Content-Type`, `application/octet-stream`)

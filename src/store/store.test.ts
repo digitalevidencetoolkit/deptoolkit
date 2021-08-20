@@ -1,5 +1,11 @@
-import { Bundle } from '../types/Bundle';
+import * as fs from 'fs';
+import * as path from 'path';
+
+import type { Bundle } from '../types/Bundle';
+import type { Record } from '../types/Record';
+
 import * as Store from './index';
+import { id } from '../types/Bundle';
 
 describe('generateAboutString', () => {
   it('should throw if the record is missing the screenshot or one_file', () => {
@@ -61,5 +67,77 @@ Files included:
     expect(result).toEqual(expected);
 
     Date.now = ogNow;
+  });
+});
+
+describe('makeZip', () => {
+  let bundleRootDir = '';
+  let outDir = '';
+
+  beforeEach(() => {
+    bundleRootDir = fs.mkdtempSync('in-');
+    outDir = fs.mkdtempSync('out-');
+  });
+
+  afterEach(() => {
+    [bundleRootDir, outDir].forEach(p =>
+      fs.rmSync(p, { force: true, recursive: true })
+    );
+  });
+
+  it('should reject if the record is missing the screenshot or one_file', () => {
+    const bundles: Bundle[] = [
+      [],
+      [{ hash: 'jeej', kind: 'one_file' }],
+      [{ hash: 'tuut', kind: 'screenshot' }],
+    ];
+
+    bundles.forEach(async bundle => {
+      let zip = undefined;
+      try {
+        zip = await Store.makeZip(
+          {
+            bundle,
+            annotations: {
+              description: '',
+            },
+            data: {
+              title: 'foo',
+              url: 'http://jeej.tuut',
+            },
+          },
+          bundleRootDir,
+          outDir
+        );
+      } catch (e) {}
+      expect(zip).toBeUndefined();
+    });
+  });
+
+  it('should produce a zip of the given record, in the correct location', async () => {
+    const oneFileHash = 'this-is-the-file';
+    const screenshotHash = 'pretty-picture';
+
+    fs.writeFileSync(path.join(bundleRootDir, `${oneFileHash}.html`), 'jeej');
+    fs.writeFileSync(path.join(bundleRootDir, `${screenshotHash}.png`), 'tuut');
+
+    const record: Record = {
+      data: {
+        title: 'Non Stop Nyan Cat',
+        url: 'http://www.nyan.cat/',
+      },
+      annotations: {
+        description: 'A cat farting an infinite rainbow',
+      },
+      bundle: [
+        { kind: 'one_file', hash: oneFileHash },
+        { kind: 'screenshot', hash: screenshotHash },
+      ],
+    };
+
+    await Store.makeZip(record, bundleRootDir, outDir);
+
+    // check for the zip's existence (would throw if it didn't exist)
+    fs.statSync(path.join(outDir, `${id(record.bundle)}.zip`));
   });
 });
