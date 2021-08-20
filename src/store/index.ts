@@ -74,7 +74,9 @@ export const newBundle = (
   newBundle: Bundle.NewBundle,
   configuration: WriteConfiguration
 ): Promise<Bundle.Bundle> => {
-  return Promise.all(newBundle.map(nb => writeOne(nb, configuration)));
+  return Promise.all(
+    newBundle.map(newFile => writeOne(newFile, configuration))
+  );
 };
 
 /**
