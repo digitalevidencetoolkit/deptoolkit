@@ -152,4 +152,33 @@ describe('makeZip', () => {
     });
     z.close();
   });
+
+  it('should return a rejected promise when a file is missing on disk', async () => {
+    const oneFileHash = 'this-is-the-file';
+    const screenshotHash = 'pretty-picture';
+
+    // simulate a missing file
+    // fs.writeFileSync(path.join(bundleRootDir, `${oneFileHash}.html`), 'jeej');
+    fs.writeFileSync(path.join(bundleRootDir, `${screenshotHash}.png`), 'tuut');
+
+    const record: Record = {
+      data: {
+        title: 'Non Stop Nyan Cat',
+        url: 'http://www.nyan.cat/',
+      },
+      annotations: {
+        description: 'A cat farting an infinite rainbow',
+      },
+      bundle: [
+        { kind: 'one_file', hash: oneFileHash },
+        { kind: 'screenshot', hash: screenshotHash },
+      ],
+    };
+
+    await Store.makeZip(record, bundleRootDir, outDir)
+      .then(() => {
+        throw new Error('hello error, bad luck');
+      })
+      .catch(err => console.log(`Error: ${err}`));
+  });
 });

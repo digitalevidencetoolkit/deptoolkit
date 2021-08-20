@@ -119,14 +119,24 @@ export const makeZip = (
       resolve();
     });
     zip
-      .append(fs.createReadStream(`${bundleRootDirectory}/${screenshot}`), {
-        name: screenshot,
-      })
-      .append(fs.createReadStream(`${bundleRootDirectory}/${one_file}`), {
-        name: one_file,
-      })
+      .append(
+        fs
+          .createReadStream(`${bundleRootDirectory}/${screenshot}`)
+          .on('error', reject),
+        {
+          name: screenshot,
+        }
+      )
+      .append(
+        fs
+          .createReadStream(`${bundleRootDirectory}/${one_file}`)
+          .on('error', reject),
+        {
+          name: one_file,
+        }
+      )
       .append(sidecarTextFile, { name: `about-this-export.txt` })
-      .on('error', err => reject(err))
+      .on('error', reject)
       .pipe(stream);
     zip.finalize();
   });
