@@ -57,14 +57,16 @@ app.get(
     };
     // `sku` comes with .zip at the end, which we must remove
     const cleanSku = parse(sku).name;
-    await Ledger.getDoc(cleanSku, 'id')
-      .then(r => Store.makeZip(r, rootDir, rootDir))
-      .then(() =>
-        res
-          .set(`Content-Type`, `application/octet-stream`)
-          .set(`Content-Disposition`, `attachment; filename=${sku}`)
-          .sendFile(`${sku}`, options)
-      );
+    const result = await Ledger.getDoc(cleanSku, 'id');
+    if (result === null) {
+      res.status(404).send(`Could not find the resource you asked for: ${sku}`);
+    } else {
+      await Store.makeZip(result, rootDir, rootDir);
+      res
+        .set(`Content-Type`, `application/octet-stream`)
+        .set(`Content-Disposition`, `attachment; filename=${sku}`)
+        .sendFile(`${sku}`, options);
+    }
   }
 );
 

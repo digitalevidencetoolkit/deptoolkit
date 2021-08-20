@@ -12,9 +12,9 @@ export const verifyFile = (f: Buffer): Promise<Record.FrontEndRecord | null> =>
     const hash = makeHash(f);
     await Ledger.getDoc(hash, 'screenshot')
       .then(
-        (doc: Record.Record): Promise<Record.Record> =>
+        (doc: Record.Record | null): Promise<Record.Record> =>
           new Promise(resolve => {
-            if (doc != null) resolve(doc);
+            if (doc !== null) resolve(doc);
           })
       )
       .then(r => Record.toFrontend(r))
