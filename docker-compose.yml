@@ -18,6 +18,8 @@ services:
       context: ui/
       dockerfile: Dockerfile
     env_file: .env
+    logging:
+      driver: none
     ports:
       - '8000:80'
     networks:
