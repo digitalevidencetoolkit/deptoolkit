@@ -19,6 +19,17 @@ describe('writeOne', () => {
     fs.rmSync(outDir, { recursive: true, force: true });
   });
 
+  const validateFile = async (
+    { kind, hash }: File.File,
+    expectedPath: string,
+    expectedData: string | Buffer
+  ): Promise<void> => {
+    const name = `${hash}.${kind === 'one_file' ? 'html' : 'png'}`;
+    const actual = await fsp.readFile(path.join(expectedPath, name));
+    const expected = Buffer.from(expectedData);
+    expect(actual.compare(expected)).toBe(0);
+  };
+
   it('should write to disk the specified new bundle', async () => {
     const newBundle: Bundle.NewBundle = [
       { kind: 'one_file', data: 'jeejtuut' },
@@ -27,19 +38,29 @@ describe('writeOne', () => {
 
     const bundle = await Store.newBundle(newBundle, { directory: outDir });
 
-    const validateFile = async (
-      { kind, hash }: File.File,
-      expectedData: string | Buffer
-    ): Promise<void> => {
-      const name = `${hash}.${kind === 'one_file' ? 'html' : 'png'}`;
-      const actual = await fsp.readFile(path.join(outDir, name));
-      const expected = Buffer.from(expectedData);
-      expect(actual.compare(expected)).toBe(0);
-    };
+    expect(bundle.length).toBe(2);
+    await Promise.all(
+      bundle.map((file, index) =>
+        validateFile(file, outDir, newBundle[index].data)
+      )
+    );
+  });
+
+  it('should create the specified directory if it doesnt exist', async () => {
+    const nestedDir = path.join(outDir, 'jeej-tuut');
+
+    const newBundle: Bundle.NewBundle = [
+      { kind: 'one_file', data: 'jeejtuut' },
+      { kind: 'screenshot', data: 'foobar' },
+    ];
+
+    const bundle = await Store.newBundle(newBundle, { directory: nestedDir });
 
     expect(bundle.length).toBe(2);
     await Promise.all(
-      bundle.map((file, index) => validateFile(file, newBundle[index].data))
+      bundle.map((file, index) =>
+        validateFile(file, nestedDir, newBundle[index].data)
+      )
     );
   });
 
