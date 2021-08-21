@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import 'archiver';
-import { mkdir } from 'fs/promises';
+import fsp from 'fs/promises';
+import * as path from 'path';
 import { makeHash } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
@@ -14,18 +15,23 @@ type WriteConfiguration = {
 };
 
 /**
- * Promise to write a buffer to a path
- * @param b a buffer if file is an image ; a string of HTML code if file is a page
- * @param path string
- * @returns A resolved promise
+ * Write the specified `data` in the specified `directory`, under the specified
+ * `fileName`.
+ *
+ * If `directory` doesn't exist, it is created. If there is already a file
+ * named `fileName` in that location, it is silently overwritten.
+ *
+ * @returns a Promise resolving once the write is done.
  */
-const writeToDisk = (b: Buffer | string, path: string): Promise<void> =>
-  new Promise((resolve, reject) =>
-    fs.writeFile(path, b, err => {
-      if (err) reject(err);
-      else resolve();
-    })
-  );
+const writeToDisk = async (
+  data: Buffer | string,
+  directory: string,
+  fileName: string
+): Promise<void> => {
+  // create the directory if it does not yet exist
+  await fsp.mkdir(directory, { recursive: true });
+  await fsp.writeFile(path.join(directory, fileName), data);
+};
 
 /**
  * Write the specified `newFile` to disk, according to the specified
@@ -43,16 +49,12 @@ const writeOne = async (
   configuration: WriteConfiguration
 ): Promise<File.File> => {
   const { directory } = configuration;
-  // create the directory if it does not yet exist
-  await mkdir(directory, { recursive: true });
-
   const { kind, data } = newFile;
 
   const hash = makeHash(data);
   const result: File.File = { kind, hash };
 
-  const path = `${directory}/${File.fileName(result)}`;
-  await writeToDisk(data, path);
+  await writeToDisk(data, directory, File.fileName(result));
 
   return result;
 };
