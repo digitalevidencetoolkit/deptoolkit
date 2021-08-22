@@ -3,22 +3,16 @@ import * as Record from '../types/Record';
 import * as Ledger from '../ledger';
 
 /**
- * Verify whether a file is present in our archive/ledger
- * @param f a Buffer, e.g. a kind of stream of binary data
- * @return a promise of a Record type, or a falsey
+ * Verify whether or not the specified `file` is present in the Ledger,
+ *
+ * @return a Promise resolving to:
+ * - `null` if the file isn't present, or
+ * - the corresponding record, converted to Frontend format, otherwise.
  **/
-export const verifyFile = (f: Buffer): Promise<Record.FrontEndRecord | null> =>
-  new Promise(async (resolve, reject) => {
-    const hash = makeHash(f);
-    await Ledger.getDoc(hash, 'screenshot')
-      .then(
-        (doc: Record.Record | null): Promise<Record.Record> =>
-          new Promise(resolve => {
-            if (doc !== null) resolve(doc);
-          })
-      )
-      .then(r => Record.toFrontend(r))
-      .then(match => {
-        resolve(match ? match : null);
-      });
-  });
+export const verifyFile = async (
+  file: Buffer
+): Promise<Record.FrontEndRecord | null> => {
+  const hash = makeHash(file);
+  const record = await Ledger.getDoc(hash, 'screenshot');
+  return record === null ? record : Record.toFrontend(record);
+};
