@@ -13,8 +13,10 @@ export const insertDoc = (r: Record.Record): Promise<Result | void> =>
     .catch(err => console.log(`${err.name}: ${err.errors}`));
 
 export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
-  const list: Result = await QLDB.listDocuments(QLDB.Constants.doc_table_name);
-  const result = list.getResultList();
+  const list: Result | undefined = await QLDB.listDocuments(
+    QLDB.Constants.doc_table_name
+  );
+  const result = list?.getResultList() || [];
   return result
     .map(e => Record.fromLedger(e))
     .map((e: Record.Record): Record.FrontEndRecord => Record.toFrontend(e));
@@ -24,12 +26,12 @@ export const getDoc = async (
   id: string,
   col: string
 ): Promise<Record.Record | null> => {
-  const list: Result = await QLDB.getOneDocument(
+  const list: Result | undefined = await QLDB.getOneDocument(
     id,
     col,
     QLDB.Constants.doc_table_name
   );
-  const result = list.getResultList();
+  const result = list?.getResultList() || [];
   if (result.length > 0) {
     return Record.fromLedger(result[0]);
   } else return null;
@@ -37,7 +39,7 @@ export const getDoc = async (
 
 export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {
   const list = await QLDB.queryHistoryOfDocument(sku);
-  const result = list.getResultList();
+  const result = list?.getResultList() || [];
   return result;
 };
 
