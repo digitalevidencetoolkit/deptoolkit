@@ -1,70 +1,102 @@
+import archiver from 'archiver';
 import * as fs from 'fs';
-import 'archiver';
-import { mkdir } from 'fs/promises';
-import { makeHash } from '../helpers';
+import * as fsp from 'fs/promises';
+import * as path from 'path';
+import { makeHash, pprint } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
-import archiver from 'archiver';
 // import * as s3storage from s3storage
 
-const config = {
-  storage: {
-    // s3: { ...s3 config}
-    filesystem: {
-      directory: './out',
-    },
-  },
+type WriteConfiguration = {
+  directory: string;
+  // s3: ...
 };
 
 /**
- * Promise to write a buffer to a path
- * @param b a buffer if file is an image ; a string of HTML code if file is a page
- * @param path string
- * @returns A resolved promise
+ * Write the specified `data` in the specified `directory`, under the specified
+ * `fileName`.
+ *
+ * If `directory` doesn't exist, it is created. If there is already a file
+ * named `fileName` in that location, it is silently overwritten.
+ *
+ * @returns a Promise resolving once the write is done.
  */
-const writeToDisk = (b: Buffer | string, path: string): Promise<void> =>
-  new Promise((resolve, reject) =>
-    fs.writeFile(path, b, err => {
-      if (err) reject(err);
-      else resolve();
-    })
-  );
-
-/**
- * Logic for saving a file to disk from a storage config object
- * @param a a newFile, made of a buffer or of a string of HTML code
- * @returns a promise of a File, having been written to disk
- **/
-export const writeOne = async (a: File.newFile): Promise<File.File> => {
-  const dir = config?.storage?.filesystem?.directory;
-  if (!dir) {
-    throw new Error(`No directory set in config`);
-  }
+const writeToDisk = async (
+  data: Buffer | string,
+  directory: string,
+  fileName: string
+): Promise<void> => {
   // create the directory if it does not yet exist
-  await mkdir(dir, { recursive: true });
-  const name = makeHash(a.data);
-  const format = a.kind === 'one_file' ? 'html' : 'png';
-  const path = `${dir}/${name}.${format}`;
-  await writeToDisk(a.data, path);
-  return { kind: a.kind, hash: name };
+  await fsp.mkdir(directory, { recursive: true });
+  await fsp.writeFile(path.join(directory, fileName), data);
 };
 
 /**
- * Writes base64 data to files
- * @param b a NewBundle, made of base64 string data
- * @returns a promise of a Bundle, made of files written to disk
+ * Write the specified `newFile` to disk, according to the specified
+ * `configuration`.
+ *
+ * If the same file is written twice, the old version is replaced silently.
+ *
+ * @param newFile object holding and describing the data to be written
+ * @param configuration object describing how the new file should be written
+ * @returns a promise for the resulting file, resolving once the write is
+ * complete.
  **/
-export const newBundle = (b: Bundle.newBundle): Promise<Bundle.Bundle> => {
-  return Promise.all(b.map(writeOne));
+const writeOne = async (
+  newFile: File.NewFile,
+  configuration: WriteConfiguration
+): Promise<File.File> => {
+  const { directory } = configuration;
+  const { kind, data } = newFile;
+
+  const hash = makeHash(data);
+  const result: File.File = { kind, hash };
+
+  await writeToDisk(data, directory, File.fileName(result));
+
+  return result;
+};
+
+/**
+ * Writes to disk the data contained in the specified `newBundle`, following the
+ * specified `configuration`.
+ *
+ * If the same new bundle is written twice (or part of a new bundle is
+ * re-written as part of another new bundle), the relevant files are replaced
+ * silently.
+ *
+ * @param newBundle a NewBundle, made of base64 string data
+ * @param configuration object describing how to write the new bundle
+ * @returns a promise for the resulting bundle, resolving once the write is
+ * complete.
+ **/
+export const newBundle = (
+  newBundle: Bundle.NewBundle,
+  configuration: WriteConfiguration
+): Promise<Bundle.Bundle> => {
+  return Promise.all(
+    newBundle.map(newFile => writeOne(newFile, configuration))
+  );
 };
 
 /**
  * Generates a string describing the specified Record `r`.
  */
 export const generateAboutString = (r: Record.Record): string => {
-  const screenshot = r.bundle.find(e => e.kind === 'screenshot').hash + '.png';
-  const one_file = r.bundle.find(e => e.kind === 'one_file').hash + '.html';
+  const screenshotFile = r.bundle.find(e => e.kind === 'screenshot');
+  const oneFileFile = r.bundle.find(e => e.kind === 'one_file');
+  if (screenshotFile === undefined || oneFileFile === undefined) {
+    throw new Error(
+      `This record's bundle is malformed (missing either screenshot or oneFile): ${pprint(
+        r
+      )}`
+    );
+  }
+
+  const screenshot = File.fileName(screenshotFile);
+  const one_file = File.fileName(oneFileFile);
+
   return `THE DIGITAL EVIDENCE PRESERVATION TOOLKIT
 ============
 Working copy export generated on ${Date.now()}
@@ -102,11 +134,23 @@ export const makeZip = (
   const out = `${outDirectory}/${Bundle.id(b)}.zip`;
 
   return new Promise<void>((resolve, reject) => {
+    const screenshotFile = r.bundle.find(e => e.kind === 'screenshot');
+    const oneFileFile = r.bundle.find(e => e.kind === 'one_file');
+    if (screenshotFile === undefined || oneFileFile === undefined) {
+      reject(
+        new Error(
+          `This record's bundle is malformed (missing either screenshot or oneFile): ${pprint(
+            r
+          )}`
+        )
+      );
+      return;
+    }
     // presently the ZIP file only includes the full screenshot and one-file
     // HTML archive. isolating them like so isn't the most elegant.
     // maybe replace with a function from `Bundle`?
-    const screenshot = b.find(e => e.kind === 'screenshot').hash + '.png';
-    const one_file = b.find(e => e.kind === 'one_file').hash + '.html';
+    const screenshotName = File.fileName(screenshotFile);
+    const one_fileName = File.fileName(oneFileFile);
     const sidecarTextFile = generateAboutString(r);
 
     const stream = fs.createWriteStream(out);
@@ -121,18 +165,18 @@ export const makeZip = (
     zip
       .append(
         fs
-          .createReadStream(`${bundleRootDirectory}/${screenshot}`)
+          .createReadStream(`${bundleRootDirectory}/${screenshotName}`)
           .on('error', reject),
         {
-          name: screenshot,
+          name: screenshotName,
         }
       )
       .append(
         fs
-          .createReadStream(`${bundleRootDirectory}/${one_file}`)
+          .createReadStream(`${bundleRootDirectory}/${one_fileName}`)
           .on('error', reject),
         {
-          name: one_file,
+          name: one_fileName,
         }
       )
       .append(sidecarTextFile, { name: `about-this-export.txt` })

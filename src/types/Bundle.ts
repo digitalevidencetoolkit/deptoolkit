@@ -11,7 +11,7 @@ export type Bundle = File.File[];
  * list of File-like things with base64-encoded strings,
  * that should be stored but haven't been yet
  */
-export type newBundle = Array<File.newFile>;
+export type NewBundle = Array<File.NewFile>;
 
 /**
  * Ensure the bundle (a list of files) is _always_ sorted
