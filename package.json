@@ -7,7 +7,7 @@
       "email": "niko@niko.io"
     }
   ],
-  "version": "0.9.2",
+  "version": "0.9.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/digitalevidencetoolkit/deptoolkit"
