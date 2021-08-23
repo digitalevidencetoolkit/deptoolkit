@@ -27,7 +27,7 @@ type QLDBHistoryItem = {
 
 // @TODO: error handling!
 export async function fetchData(): Promise<LedgerEntry[]> {
-  const res = await fetch('http://localhost:3000/list-docs');
+  const res = await fetch('/api/list-docs');
   const data = await res.json();
   return data;
 }
@@ -39,7 +39,7 @@ export async function fetchData(): Promise<LedgerEntry[]> {
  */
 // @TODO: error handling!
 async function fetchItemHistory(id: string): Promise<QLDBHistory> {
-  const res = await fetch(`http://localhost:3000/history/${id}`);
+  const res = await fetch(`/api/history/${id}`);
   const data = await res.json();
   return data;
 }
@@ -89,7 +89,7 @@ export const getOriginalTX = (h: QLDBHistory): OriginalTx => {
  **/
 // @TODO: make this function return a fulfilling or rejecting promise
 export async function postDocumentRevision(thing: FormData, id: string) {
-  const res = await fetch(`http://localhost:3000/edit-description/${id}`, {
+  const res = await fetch(`/api/edit-description/${id}`, {
     method: 'POST',
     body: thing,
   });
@@ -106,14 +106,14 @@ export async function postDocumentRevision(thing: FormData, id: string) {
  * @returns a promise of a response
  */
 export async function verifyFile(payload: FormData): Promise<Response> {
-  return await fetch(`http://localhost:3000/verify`, {
+  return await fetch(`/api/verify`, {
     method: 'POST',
     body: payload,
   });
 }
 
 export async function requestWorkingCopy(sku: string) {
-  downloadAFile(`http://localhost:3000/export-copy/${sku}.zip`, `${sku}.zip`);
+  downloadAFile(`/api/export-copy/${sku}.zip`, `${sku}.zip`);
 }
 
 const downloadAFile = (fileUrl: string, fileName: string) => {

@@ -9,12 +9,14 @@ import { Result } from 'amazon-qldb-driver-nodejs';
 export const insertDoc = (r: Record.Record): Promise<Result | void> =>
   Record.validate(r)
     .then(Record.toLedger)
-    .then(dbItem => QLDB.insertDocuments(QLDB.Constants.doc_table_name, dbItem))
+    .then(dbItem =>
+      QLDB.insertDocuments(process.env.DOC_TABLE_NAME as string, dbItem)
+    )
     .catch(err => console.log(`${err.name}: ${err.errors}`));
 
 export const listDocs = async (): Promise<Record.FrontEndRecord[]> => {
   const list: Result | undefined = await QLDB.listDocuments(
-    QLDB.Constants.doc_table_name
+    process.env.DOC_TABLE_NAME as string
   );
   const result = list?.getResultList() || [];
   return result
@@ -29,12 +31,14 @@ export const getDoc = async (
   const list: Result | undefined = await QLDB.getOneDocument(
     id,
     col,
-    QLDB.Constants.doc_table_name
+    process.env.DOC_TABLE_NAME as string
   );
   const result = list?.getResultList() || [];
   if (result.length > 0) {
     return Record.fromLedger(result[0]);
-  } else return null;
+  } else {
+    return null;
+  }
 };
 
 export const listDocHistory = async (sku: string): Promise<dom.Value[]> => {
@@ -47,7 +51,11 @@ export const updateDoc = async (sku: string, data: Annotation) => {
   Annotations.validate(data)
     .then(annotation => annotation.description)
     .then(description =>
-      QLDB.updateDocument(QLDB.Constants.doc_table_name, description, sku)
+      QLDB.updateDocument(
+        process.env.DOC_TABLE_NAME as string,
+        description,
+        sku
+      )
     )
     .catch(err => console.log(`${err.name}: ${err.errors}`));
 };

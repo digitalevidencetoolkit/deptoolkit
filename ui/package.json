@@ -1,6 +1,6 @@
 {
   "name": "deptoolkit-ui",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "engines": {
     "node": ">=14.0"
   },
@@ -12,6 +12,8 @@
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
+    "@sveltejs/adapter-node": "^1.0.0-next.43",
+    "@sveltejs/adapter-static": "^1.0.0-next.16",
     "@sveltejs/kit": "next",
     "@types/cookie": "^0.4.0",
     "attractions": "^3.3.0",

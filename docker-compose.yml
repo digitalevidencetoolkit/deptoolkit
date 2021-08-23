@@ -2,11 +2,10 @@ version: '3'
 
 services:
   endpoint:
+    restart: always
     build:
       context: .
       dockerfile: ./Dockerfile
-    expose:
-      - '3000'
     ports:
       - '3000:3000'
     networks:
@@ -14,27 +13,15 @@ services:
     volumes:
       - './out:/app/out'
 
-  gui:
+  ui:
     build:
       context: ui/
       dockerfile: Dockerfile
-    expose:
-      - '8000'
+    env_file: .env
+    logging:
+      driver: none
     ports:
-      - '8000:8000'
-    networks:
-      - app
-    depends_on:
-      - endpoint
-
-  extension:
-    build:
-      context: extension/
-      dockerfile: Dockerfile
-    expose:
-      - '9000'
-    ports:
-      - '9000:9000'
+      - '8000:80'
     networks:
       - app
     depends_on:

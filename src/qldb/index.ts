@@ -4,15 +4,13 @@ import {
   TransactionExecutor,
   RetryConfig,
 } from 'amazon-qldb-driver-nodejs';
+import { config } from 'dotenv';
 import { ClientConfiguration } from 'aws-sdk/clients/qldbsession';
 
-export const Constants = {
-  ledger_name: 'deptoolkit',
-  doc_table_name: 'Document',
-  doc_index_key: 'sku',
-};
-
-const qldbDriver: QldbDriver = createQldbDriver();
+config();
+const qldbDriver: QldbDriver = createQldbDriver(
+  process.env.LEDGER_NAME as string
+);
 
 /**
  * Create a driver for creating sessions.
@@ -21,8 +19,10 @@ const qldbDriver: QldbDriver = createQldbDriver();
  * @returns The driver for creating sessions.
  */
 function createQldbDriver(
-  ledgerName: string = Constants.ledger_name,
-  serviceConfigurationOptions: ClientConfiguration = { region: 'eu-central-1' }
+  ledgerName: string,
+  serviceConfigurationOptions: ClientConfiguration = {
+    region: process.env.AWS_REGION,
+  }
 ): QldbDriver {
   const retryLimit = 4;
   const maxConcurrentTransactions = 10;
@@ -160,7 +160,7 @@ async function getDocumentIdByField(
 export const queryHistoryOfDocument = async function (
   sku: string
 ): Promise<Result | undefined> {
-  const tableName = Constants.doc_table_name;
+  const tableName = process.env.DOC_TABLE_NAME as string;
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `SELECT * from history (${tableName}) AS h WHERE h.metadata.id = ?`;
