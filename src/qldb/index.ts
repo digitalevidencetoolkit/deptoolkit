@@ -8,7 +8,9 @@ import { config } from 'dotenv';
 import { ClientConfiguration } from 'aws-sdk/clients/qldbsession';
 
 config();
-const qldbDriver: QldbDriver = createQldbDriver(process.env.LEDGER_NAME);
+const qldbDriver: QldbDriver = createQldbDriver(
+  process.env.LEDGER_NAME as string
+);
 
 /**
  * Create a driver for creating sessions.
@@ -158,7 +160,7 @@ async function getDocumentIdByField(
 export const queryHistoryOfDocument = async function (
   sku: string
 ): Promise<Result | undefined> {
-  const tableName = process.env.DOC_TABLE_NAME;
+  const tableName = process.env.DOC_TABLE_NAME as string;
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `SELECT * from history (${tableName}) AS h WHERE h.metadata.id = ?`;
