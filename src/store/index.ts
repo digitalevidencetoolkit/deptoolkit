@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import 'archiver';
 import fsp from 'fs/promises';
 import * as path from 'path';
-import { makeHash } from '../helpers';
+import { makeHash, pprint } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
@@ -85,8 +85,18 @@ export const newBundle = (
  * Generates a string describing the specified Record `r`.
  */
 export const generateAboutString = (r: Record.Record): string => {
-  const screenshot = File.fileName(r.bundle.find(e => e.kind === 'screenshot'));
-  const one_file = File.fileName(r.bundle.find(e => e.kind === 'one_file'));
+  const screenshotFile = r.bundle.find(e => e.kind === 'screenshot');
+  const oneFileFile = r.bundle.find(e => e.kind === 'one_file');
+  if (screenshotFile === undefined || oneFileFile === undefined) {
+    throw new Error(
+      `This record's bundle is malformed (missing either screenshot or oneFile): ${pprint(
+        r
+      )}`
+    );
+  }
+
+  const screenshot = File.fileName(screenshotFile);
+  const one_file = File.fileName(oneFileFile);
 
   return `THE DIGITAL EVIDENCE PRESERVATION TOOLKIT
 ============
@@ -125,11 +135,23 @@ export const makeZip = (
   const out = `${outDirectory}/${Bundle.id(b)}.zip`;
 
   return new Promise<void>((resolve, reject) => {
+    const screenshotFile = r.bundle.find(e => e.kind === 'screenshot');
+    const oneFileFile = r.bundle.find(e => e.kind === 'one_file');
+    if (screenshotFile === undefined || oneFileFile === undefined) {
+      reject(
+        new Error(
+          `This record's bundle is malformed (missing either screenshot or oneFile): ${pprint(
+            r
+          )}`
+        )
+      );
+      return;
+    }
     // presently the ZIP file only includes the full screenshot and one-file
     // HTML archive. isolating them like so isn't the most elegant.
     // maybe replace with a function from `Bundle`?
-    const screenshotName = File.fileName(b.find(e => e.kind === 'screenshot'));
-    const one_fileName = File.fileName(b.find(e => e.kind === 'one_file'));
+    const screenshotName = File.fileName(screenshotFile);
+    const one_fileName = File.fileName(oneFileFile);
     const sidecarTextFile = generateAboutString(r);
 
     const stream = fs.createWriteStream(out);

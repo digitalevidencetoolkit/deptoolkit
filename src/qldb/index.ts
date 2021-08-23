@@ -64,7 +64,7 @@ const ConnectToLedger = async function (): Promise<void> {
  */
 export const listDocuments = async function (
   tableName: string
-): Promise<Result> {
+): Promise<Result | undefined> {
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `SELECT * FROM ${tableName}`;
@@ -82,7 +82,7 @@ export const getOneDocument = async function (
   id: string,
   column: string,
   tableName: string
-): Promise<Result> {
+): Promise<Result | undefined> {
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `SELECT * FROM ${tableName} WHERE ${column}='${id}'`;
@@ -105,7 +105,7 @@ export const getOneDocument = async function (
 export const insertDocuments = async function (
   tableName: string,
   documents: object
-): Promise<Result> {
+): Promise<Result | undefined> {
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `INSERT INTO ${tableName} ?`;
@@ -132,9 +132,9 @@ async function getDocumentIdByField(
   tableName: string,
   field: string,
   value: string
-): Promise<string> {
+): Promise<string | undefined> {
   const query: string = `SELECT id FROM ${tableName} AS t BY id WHERE t.${field} = ?`;
-  let documentId: string = undefined;
+  let documentId: string | undefined;
   await txn
     .execute(query, value)
     .then((result: Result) => {
@@ -144,7 +144,7 @@ async function getDocumentIdByField(
           `Unable to retrieve document ID using ${field}: ${value}.`
         );
       }
-      documentId = resultList[0].get('id').stringValue();
+      documentId = resultList[0].get('id')?.stringValue() || undefined;
     })
     .catch((err: any) => {
       console.log(`Error getting documentId: ${err}`);
@@ -159,14 +159,14 @@ async function getDocumentIdByField(
  */
 export const queryHistoryOfDocument = async function (
   sku: string
-): Promise<Result> {
+): Promise<Result | undefined> {
   const tableName = Constants.doc_table_name;
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
     const statement: string = `SELECT * from history (${tableName}) AS h WHERE h.metadata.id = ?`;
 
     let r = qldbDriver.executeLambda(async (txn: TransactionExecutor) => {
-      const documentId: string = await getDocumentIdByField(
+      const documentId: string | undefined = await getDocumentIdByField(
         txn,
         tableName,
         'id',
@@ -197,10 +197,10 @@ export const updateDocument = async function (
   tableName: string,
   description: string,
   id: string
-): Promise<Result> {
+): Promise<Result | undefined> {
   try {
     const qldbDriver: QldbDriver = getQldbDriver();
-    const statement: string = `UPDATE ${tableName} AS r 
+    const statement: string = `UPDATE ${tableName} AS r
     SET r.description = ?
     WHERE r.id = ?`;
     let r = qldbDriver.executeLambda(async (txn: TransactionExecutor) => {
