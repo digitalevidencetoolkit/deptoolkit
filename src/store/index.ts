@@ -1,12 +1,11 @@
+import archiver from 'archiver';
 import * as fs from 'fs';
-import 'archiver';
-import fsp from 'fs/promises';
+import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { makeHash, pprint } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
-import archiver from 'archiver';
 // import * as s3storage from s3storage
 
 type WriteConfiguration = {
