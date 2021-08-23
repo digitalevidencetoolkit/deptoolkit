@@ -1,4 +1,6 @@
+import 'buffer';
 import * as fs from 'fs';
+import * as fsp from 'fs/promises';
 import * as path from 'path';
 import Zip from 'node-stream-zip';
 
@@ -7,6 +9,79 @@ import * as Record from '../types/Record';
 import * as File from '../types/File';
 
 import * as Store from './index';
+
+describe('writeOne', () => {
+  let outDir = '';
+  beforeEach(() => {
+    outDir = fs.mkdtempSync('out-');
+  });
+  afterEach(() => {
+    fs.rmSync(outDir, { recursive: true, force: true });
+  });
+
+  const validateFile = async (
+    { kind, hash }: File.File,
+    expectedPath: string,
+    expectedData: string | Buffer
+  ): Promise<void> => {
+    const name = `${hash}.${kind === 'one_file' ? 'html' : 'png'}`;
+    const actual = await fsp.readFile(path.join(expectedPath, name));
+    const expected = Buffer.from(expectedData);
+    expect(actual.compare(expected)).toBe(0);
+  };
+
+  it('should write to disk the specified new bundle', async () => {
+    const newBundle: Bundle.NewBundle = [
+      { kind: 'one_file', data: 'jeejtuut' },
+      { kind: 'screenshot', data: 'foobar' },
+    ];
+
+    const bundle = await Store.newBundle(newBundle, { directory: outDir });
+
+    expect(bundle.length).toBe(2);
+    await Promise.all(
+      bundle.map((file, index) =>
+        validateFile(file, outDir, newBundle[index].data)
+      )
+    );
+  });
+
+  it('should create the specified directory if it doesnt exist', async () => {
+    const nestedDir = path.join(outDir, 'jeej-tuut');
+
+    const newBundle: Bundle.NewBundle = [
+      { kind: 'one_file', data: 'jeejtuut' },
+      { kind: 'screenshot', data: 'foobar' },
+    ];
+
+    const bundle = await Store.newBundle(newBundle, { directory: nestedDir });
+
+    expect(bundle.length).toBe(2);
+    await Promise.all(
+      bundle.map((file, index) =>
+        validateFile(file, nestedDir, newBundle[index].data)
+      )
+    );
+  });
+
+  it('should be robust to writing the same file twice', async () => {
+    const newBundle1: Bundle.NewBundle = [
+      { kind: 'one_file', data: 'jeejtuut' },
+      { kind: 'screenshot', data: 'foobar' },
+    ];
+    const newBundle2: Bundle.NewBundle = [
+      { kind: 'one_file', data: 'jeejtuut' },
+      { kind: 'screenshot', data: 'souce' },
+    ];
+
+    const bundle1 = await Store.newBundle(newBundle1, { directory: outDir });
+    const bundle2 = await Store.newBundle(newBundle2, { directory: outDir });
+    const bundle3 = await Store.newBundle(newBundle1, { directory: outDir });
+
+    expect(bundle1[0]).toEqual(bundle2[0]);
+    expect(bundle1).toEqual(bundle3);
+  });
+});
 
 describe('generateAboutString', () => {
   it('should throw if the record is missing the screenshot or one_file', () => {
@@ -182,6 +257,8 @@ describe('makeZip', () => {
       .then(() => {
         throw new Error('hello error, bad luck');
       })
-      .catch(err => console.log(`Error: ${err}`));
+      .catch(() => {
+        // this is the expected behavior
+      });
   });
 });
