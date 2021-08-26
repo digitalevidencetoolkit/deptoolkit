@@ -20,11 +20,15 @@
 
   export let entry: LedgerEntry;
   export let i: number;
+  export let muted: boolean;
+
   let showEditingPanel: boolean = false;
+  let showHistory: boolean = false;
 
   let originalTX: null | OriginalTx = null;
   $: if (entry.history) {
     originalTX = Ledger.getOriginalTX(entry.history);
+    showHistory = true;
   }
 
   const pathToThumbnail = (path: string): string => `/api/file/${path}.png`;
@@ -105,7 +109,7 @@
 <section
   class="{isOdd === true ? 'odd' : 'even'} {showEditingPanel
     ? 'tall'
-    : 'small'}"
+    : 'small'} {showHistory ? 'tall' : 'small'}"
   in:fade
 >
   <div class="thumbnail">
@@ -140,17 +144,19 @@
       <pre><BookOpenIcon size="1x"/> {entry.description}</pre>
     {/if}
 
-    <div class="row">
-      <Button
-        small
-        disabled={entry.history ? true : false}
-        on:click={() => Ledger.addHistoryTo(entry)}
-        ><pre><ClockIcon size="1x" /> Show history</pre></Button
-      >
-      <Button small on:click={() => (showEditingPanel = !showEditingPanel)}
-        ><pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
-      >
-    </div>
+    {#if !muted}
+      <div class="row">
+        <Button
+          small
+          disabled={entry.history ? true : false}
+          on:click={() => Ledger.addHistoryTo(entry)}
+          ><pre><ClockIcon size="1x" /> Show history</pre></Button
+        >
+        <Button small on:click={() => (showEditingPanel = !showEditingPanel)}
+          ><pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
+        >
+      </div>
+    {/if}
 
     <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}
       ><pre><EditIcon size="1x" /> Export working copy</pre></Button

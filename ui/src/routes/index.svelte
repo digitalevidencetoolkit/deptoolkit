@@ -50,7 +50,7 @@
   hr {
     width: 30%;
     margin: 0 auto;
-    color: #ddd;
+    color: var(--muted-grey);
     margin-bottom: 2rem;
   }
 
