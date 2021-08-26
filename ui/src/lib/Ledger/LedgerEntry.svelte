@@ -51,17 +51,22 @@
   }
 
   section {
-    height: 250px;
+    height: 350px;
 
     &.even {
       background-color: #fbfbfb;
     }
 
-    .thumbnail,
-    img {
+    .thumbnail {
       width: 300px;
       height: 200px;
-      border: 1px solid #ddd;
+      margin-top: 1rem;
+
+      img {
+        width: 300px;
+        height: 200px;
+        border: 1px solid #ddd;
+      }
     }
 
     .metadata {
@@ -69,7 +74,7 @@
 
       .showHelp:hover {
         cursor: help;
-        color: #696969;
+        color: var(--accent-color);
         transition: color 0.3s;
       }
 
@@ -84,6 +89,9 @@
     .row {
       display: flex;
       flex-direction: row;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dotted var(--muted-grey);
     }
   }
 </style>
@@ -121,7 +129,7 @@
       <pre><BookOpenIcon size="1x"/> {entry.description}</pre>
     {/if}
 
-    <div class="row" style="margin-top: 1rem;">
+    <div class="row">
       <Button
         small
         disabled={entry.history ? true : false}

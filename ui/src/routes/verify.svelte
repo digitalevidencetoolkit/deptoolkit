@@ -25,16 +25,12 @@
   }
 </script>
 
-<style>
-  .content {
-    width: 100%;
-    max-width: var(--column-width);
-    margin: var(--column-margin-top) auto 0 auto;
-  }
-</style>
-
 <svelte:head>
   <title>Verify</title>
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:400,600,700"
+    rel="stylesheet"
+  />
 </svelte:head>
 
 <div class="content">
@@ -60,3 +56,11 @@
     <Ledger.LedgerEntryComponent entry={item} {i} />
   {/each}
 </div>
+
+<style>
+  .content {
+    width: 100%;
+    max-width: var(--column-width);
+    margin: var(--column-margin-top) auto 0 auto;
+  }
+</style>

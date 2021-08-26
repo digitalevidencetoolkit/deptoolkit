@@ -8,24 +8,12 @@
   ledgerData.set(Ledger.fetchData());
 </script>
 
-<style lang="scss">
-  hr {
-    color: var(--accent-color);
-  }
-  section {
-    width: 100%;
-    max-width: var(--column-width);
-    margin: var(--column-margin-top) auto 0 auto;
-
-    .center {
-      margin-top: 3rem;
-      text-align: center;
-    }
-  }
-</style>
-
 <svelte:head>
   <title>Library</title>
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:400,600,700"
+    rel="stylesheet"
+  />
 </svelte:head>
 
 <section>
@@ -44,3 +32,19 @@
     <p style="color: red">{error.message}</p>
   {/await}
 </section>
+
+<style lang="scss">
+  hr {
+    color: var(--muted-grey);
+  }
+  section {
+    width: 100%;
+    max-width: var(--column-width);
+    margin: var(--column-margin-top) auto 0 auto;
+
+    .center {
+      margin-top: 3rem;
+      text-align: center;
+    }
+  }
+</style>
