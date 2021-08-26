@@ -51,7 +51,13 @@
   }
 
   section {
-    height: 350px;
+    &.small {
+      height: 230px;
+    }
+    &.tall {
+      height: 350px;
+    }
+    transition: height 0.7s;
 
     &.even {
       background-color: #fbfbfb;
@@ -96,7 +102,12 @@
   }
 </style>
 
-<section class={isOdd === true ? 'odd' : 'even'} in:fade>
+<section
+  class="{isOdd === true ? 'odd' : 'even'} {showEditingPanel
+    ? 'tall'
+    : 'small'}"
+  in:fade
+>
   <div class="thumbnail">
     {#if entry.thumb_hash}
       <img src={pathToThumbnail(entry.thumb_hash)} alt="" />
@@ -140,12 +151,12 @@
         ><pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
       >
     </div>
+
+    <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}
+      ><pre><EditIcon size="1x" /> Export working copy</pre></Button
+    >
     {#if showEditingPanel === true}
       <EditingPanel {entry} />
     {/if}
-
-    <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}
-      ><pre><EditIcon size="1x" /> Download ZIP</pre></Button
-    >
   </div>
 </section>
