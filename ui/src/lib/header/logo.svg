@@ -9,12 +9,12 @@
         <g clip-path="url(#_clip1)">
             <g transform="matrix(1.23935,0,0,1.13928,-97.1805,-50.888)">
                 <g transform="matrix(1,0,0,1,-11.0746,28.9813)">
-                    <path d="M385.899,202.91L385.899,507.127" style="fill:none;stroke:black;stroke-width:40px;"/>
+                    <path d="M385.899,202.91L385.899,507.127" style="fill:none;stroke:#b10dc9;stroke-width:40px;"/>
                 </g>
-                <path d="M374.825,536.108L653.246,384L374.825,231.892" style="fill:none;stroke:black;stroke-width:40px;"/>
+                <path d="M374.825,536.108L653.246,384L374.825,231.892" style="fill:none;stroke:#b10dc9;stroke-width:40px;"/>
             </g>
             <g transform="matrix(1.85396,0,0,1.70426,-730.091,-120.537)">
-                <circle cx="659.946" cy="295.767" r="147.946" style="fill:rgb(235,235,235);fill-opacity:0;stroke:black;stroke-width:13.37px;"/>
+                <circle cx="659.946" cy="295.767" r="147.946" style="fill:rgb(235,235,235);fill-opacity:0;stroke:#b10dc9;stroke-width:13.37px;"/>
             </g>
             <g id="Layer1" transform="matrix(1.23935,0,0,1.13928,-116.34,-53.9573)">
                 <g transform="matrix(1,0,0,1,-20,-13)">
