@@ -95,7 +95,7 @@
 
     <h3>Positive database matches:</h3>
     {#each matches as item, i}
-      <Ledger.LedgerEntryComponent entry={item} {i} muted={true} />
+      <Ledger.LedgerEntryComponent entry={item} {i} isMuted={true} />
     {/each}
   {/if}
 </div>

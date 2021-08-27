@@ -77,7 +77,7 @@
         align-items: center;
         transition: 0.5s color;
         font-size: 1.8rem;
-        font-weight: 400;
+        font-weight: 700;
         color: var(--accent-color);
 
         &:hover {

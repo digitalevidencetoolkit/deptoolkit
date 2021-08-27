@@ -21,7 +21,7 @@
 
   export let entry: LedgerEntry;
   export let i: number;
-  export let muted: boolean;
+  export let isMuted: boolean;
 
   let showEditingPanel: boolean = false;
   let showHistory: boolean = false;
@@ -108,7 +108,7 @@
   class="{isOdd === true ? 'odd' : 'even'} {showEditingPanel
     ? 'tall'
     : 'small'} {showHistory ? 'tall' : 'small'}"
-  in:fade={{ duration: muted === true ? 200 : 0 }}
+  in:fade={{ duration: isMuted === true ? 200 : 0 }}
 >
   <div class="thumbnail">
     <EntryThumbnail url={entry.thumb_hash} />
@@ -141,7 +141,7 @@
       <pre><BookOpenIcon size="1x"/> {entry.description}</pre>
     {/if}
 
-    {#if !muted}
+    {#if !isMuted}
       <div class="row">
         <Button
           small

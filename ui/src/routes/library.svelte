@@ -46,7 +46,7 @@
     </div>
   {:then data}
     {#each data as item, i}
-      <Ledger.LedgerEntryComponent entry={item} {i} />
+      <Ledger.LedgerEntryComponent entry={item} {i} isMuted={false} />
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>
