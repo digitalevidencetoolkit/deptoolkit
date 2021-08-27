@@ -5,19 +5,11 @@
   import History from './History.svelte';
   import EditingPanel from './EditingPanel.svelte';
   import EntryThumbnail from './EntryThumbnail.svelte';
-  import { domainFromUrl, shortHash } from '$lib/helpers';
+  import EntryMetadata from './EntryMetadata.svelte';
 
   //UI
   import { Button } from 'attractions';
-  import {
-    ClockIcon,
-    ExternalLinkIcon,
-    KeyIcon,
-    CameraIcon,
-    FileTextIcon,
-    EditIcon,
-    BookOpenIcon,
-  } from 'svelte-feather-icons';
+  import { ClockIcon, EditIcon, BookOpenIcon } from 'svelte-feather-icons';
 
   export let entry: LedgerEntry;
   export let i: number;
@@ -41,19 +33,14 @@
     margin-bottom: 0;
   }
 
-  section h4 {
-    margin-bottom: 0.5rem;
-  }
-
   section {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     width: 100%;
     margin: 1rem 0;
     padding: 1rem;
-  }
 
-  section {
     &.small {
       height: 230px;
     }
@@ -77,29 +64,11 @@
       border: 1px solid #ddd;
     }
 
-    .metadata {
-      margin-left: 1rem;
-
-      .showHelp:hover {
-        cursor: help;
-        color: var(--accent-color);
-        transition: color 0.3s;
-      }
-
-      .hashes {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 300px;
-      }
-    }
-
     .row {
       display: flex;
       flex-direction: row;
       margin-top: 1rem;
       padding-top: 1rem;
-      border-top: 1px dotted var(--muted-grey);
     }
   }
 </style>
@@ -115,22 +84,7 @@
   </div>
 
   <div class="metadata">
-    <h4>{entry.title}</h4>
-
-    <pre><ExternalLinkIcon size="1x" /> <a href={entry.url}>{domainFromUrl(entry.url)}</a></pre>
-    <div class="hashes">
-      <pre
-        class="showHelp"
-        title={entry.sku}><KeyIcon size="1x" /> {shortHash(entry.sku)}</pre>
-      <pre
-        class="showHelp"
-        title={entry.screenshot_hash}><CameraIcon size="1x" /> {shortHash(entry.screenshot_hash)}</pre>
-      {#if entry.one_file_hash}
-        <pre
-          class="showHelp"
-          title={entry.one_file_hash}><FileTextIcon size="1x" /> {shortHash(entry.one_file_hash)}</pre>
-      {/if}
-    </div>
+    <EntryMetadata {entry} />
 
     {#if entry.history}
       <History history={entry.history} />
@@ -145,12 +99,13 @@
       <div class="row">
         <Button
           small
-          disabled={entry.history ? true : false}
           on:click={() => Ledger.addHistoryTo(entry)}
-          ><pre><ClockIcon size="1x" /> Show history</pre></Button
+          disabled={entry.history ? true : false}
         >
-        <Button small on:click={() => (showEditingPanel = !showEditingPanel)}
-          ><pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
+          <pre><ClockIcon size="1x" /> Show history</pre></Button
+        >
+        <Button small on:click={() => (showEditingPanel = !showEditingPanel)}>
+          <pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
         >
       </div>
     {/if}
