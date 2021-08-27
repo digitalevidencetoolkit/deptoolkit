@@ -4,6 +4,7 @@
   import type { LedgerEntry, OriginalTx } from './index';
   import History from './History.svelte';
   import EditingPanel from './EditingPanel.svelte';
+  import EntryThumbnail from './EntryThumbnail.svelte';
   import { domainFromUrl, shortHash } from '$lib/helpers';
 
   //UI
@@ -30,8 +31,6 @@
     originalTX = Ledger.getOriginalTX(entry.history);
     showHistory = true;
   }
-
-  const pathToThumbnail = (path: string): string => `/api/file/${path}.png`;
 
   const isOdd = i % 2 === 0;
 </script>
@@ -69,14 +68,13 @@
 
     .thumbnail {
       width: 300px;
+      min-width: 300px;
       height: 200px;
       margin-top: 1rem;
-
-      img {
-        width: 300px;
-        height: 200px;
-        border: 1px solid #ddd;
-      }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #ddd;
     }
 
     .metadata {
@@ -113,10 +111,9 @@
   in:fade={{ duration: muted === true ? 200 : 0 }}
 >
   <div class="thumbnail">
-    {#if entry.thumb_hash}
-      <img src={pathToThumbnail(entry.thumb_hash)} alt="" />
-    {/if}
+    <EntryThumbnail url={entry.thumb_hash} />
   </div>
+
   <div class="metadata">
     <h4>{entry.title}</h4>
 
