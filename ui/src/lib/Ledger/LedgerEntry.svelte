@@ -73,12 +73,12 @@
   }
 </style>
 
-<section
-  class="{isOdd === true ? 'odd' : 'even'} {showEditingPanel
-    ? 'tall'
-    : 'small'} {showHistory ? 'tall' : 'small'}"
-  in:fade={{ duration: isMuted === true ? 200 : 0 }}
->
+<!-- prettier-ignore -->
+<section class="{isOdd === true ? 'odd' : 'even'}
+                {showEditingPanel === false &&
+                 showHistory === false ? 'small' : 'tall'}"
+          in:fade={{ duration: isMuted === true ? 200 : 0 }}>
+
   <div class="thumbnail">
     <EntryThumbnail url={entry.thumb_hash} />
   </div>
@@ -97,22 +97,23 @@
 
     {#if !isMuted}
       <div class="row">
-        <Button
-          small
+        <!-- prettier-ignore -->
+        <Button small 
           on:click={() => Ledger.addHistoryTo(entry)}
-          disabled={entry.history ? true : false}
-        >
-          <pre><ClockIcon size="1x" /> Show history</pre></Button
-        >
+          disabled={entry.history ? true : false}>
+          <pre><ClockIcon size="1x" /> Show history</pre>
+        </Button>
         <Button small on:click={() => (showEditingPanel = !showEditingPanel)}>
-          <pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre></Button
-        >
+          <pre><EditIcon size="1x" /> {showEditingPanel ? `Hide panel` : `Edit metadata `}</pre>
+        </Button>
       </div>
     {/if}
 
-    <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}
-      ><pre><EditIcon size="1x" /> Export working copy</pre></Button
-    >
+    <!-- prettier-ignore -->
+    <Button small on:click={() => Ledger.requestWorkingCopy(entry.sku)}>
+      <pre><EditIcon size="1x" /> Export working copy</pre>
+    </Button>
+
     {#if showEditingPanel === true}
       <EditingPanel {entry} />
     {/if}

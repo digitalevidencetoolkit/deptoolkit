@@ -36,13 +36,17 @@
 <h4>{title}</h4>
 <pre><ExternalLinkIcon size="1x" /> <a href={url}>{domainFromUrl(url)}</a></pre>
 <div class="row">
-  <pre class="showHelp" title={sku}><KeyIcon size="1x" /> {shortHash(sku)}</pre>
-  <pre
-    class="showHelp"
-    title={screenshot_hash}><CameraIcon size="1x" /> {shortHash(screenshot_hash)}</pre>
+  <!-- prettier-ignore -->
+  <pre class="showHelp" title={sku}>
+    <KeyIcon size="1x" /> {shortHash(sku)}</pre>
+  <!-- prettier-ignore -->
+  <pre class="showHelp" title={screenshot_hash}>
+    <CameraIcon size="1x" /> {shortHash(screenshot_hash)}
+  </pre>
   {#if entry.one_file_hash}
-    <pre
-      class="showHelp"
-      title={one_file_hash}><FileTextIcon size="1x" /> {shortHash(one_file_hash)}</pre>
+    <!-- prettier-ignore -->
+    <pre class="showHelp" title={one_file_hash}>
+      <FileTextIcon size="1x" /> {shortHash(one_file_hash)}
+    </pre>
   {/if}
 </div>
