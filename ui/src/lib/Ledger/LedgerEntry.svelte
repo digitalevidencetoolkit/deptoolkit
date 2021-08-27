@@ -110,7 +110,7 @@
   class="{isOdd === true ? 'odd' : 'even'} {showEditingPanel
     ? 'tall'
     : 'small'} {showHistory ? 'tall' : 'small'}"
-  in:fade
+  in:fade={{ duration: muted === true ? 200 : 0 }}
 >
   <div class="thumbnail">
     {#if entry.thumb_hash}
