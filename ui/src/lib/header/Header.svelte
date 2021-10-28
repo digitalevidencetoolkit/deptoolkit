@@ -3,6 +3,38 @@
   import logo from './logo.svg';
 </script>
 
+<header>
+  <div class="corner">
+    <a href="/">
+      <img src={logo} alt="DigitalEvidenceToolkit" />
+    </a>
+  </div>
+
+  <nav>
+    <svg viewBox="0 0 2 3" aria-hidden="true">
+      <path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
+    </svg>
+    <ul>
+      <li class:active={$page.path === '/'}>
+        <a sveltekit:prefetch href="/">Home</a>
+      </li>
+      <li class:active={$page.path === '/library'}>
+        <a sveltekit:prefetch href="/library">Library</a>
+      </li>
+      <li class:active={$page.path === '/verify'}>
+        <a sveltekit:prefetch href="/verify">Verify</a>
+      </li>
+    </ul>
+    <svg viewBox="0 0 2 3" aria-hidden="true">
+      <path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
+    </svg>
+  </nav>
+
+  <div class="corner">
+    <!-- TODO put something else here? github link? -->
+  </div>
+</header>
+
 <style>
   header {
     display: flex;
@@ -12,6 +44,7 @@
   .corner {
     width: 3em;
     height: 3em;
+    margin-left: 10%;
   }
 
   .corner a {
@@ -92,35 +125,3 @@
     color: var(--accent-color);
   }
 </style>
-
-<header>
-  <div class="corner">
-    <a href="/">
-      <img src={logo} alt="DigitalEvidenceToolkit" />
-    </a>
-  </div>
-
-  <nav>
-    <svg viewBox="0 0 2 3" aria-hidden="true">
-      <path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-    </svg>
-    <ul>
-      <li class:active={$page.path === '/'}>
-        <a sveltekit:prefetch href="/">Home</a>
-      </li>
-      <li class:active={$page.path === '/library'}>
-        <a sveltekit:prefetch href="/library">Library</a>
-      </li>
-      <li class:active={$page.path === '/verify'}>
-        <a sveltekit:prefetch href="/verify">Verify</a>
-      </li>
-    </ul>
-    <svg viewBox="0 0 2 3" aria-hidden="true">
-      <path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-    </svg>
-  </nav>
-
-  <div class="corner">
-    <!-- TODO put something else here? github link? -->
-  </div>
-</header>

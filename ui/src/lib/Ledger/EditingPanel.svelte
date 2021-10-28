@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { TextField, FormField, Label, Button } from 'attractions';
+  import { Label, Button } from 'attractions';
   import { fade } from 'svelte/transition';
   import { CheckIcon } from 'svelte-feather-icons';
   import * as Ledger from './index';
@@ -30,13 +30,32 @@
   .col {
     display: flex;
     flex-direction: column;
+
+    :global .label,
+    :global .btn {
+      color: var(--accent-color);
+    }
+
+    input {
+      width: 300px;
+    }
+    .buttonContainer {
+      margin-top: 0.5rem;
+      width: 60%;
+    }
   }
 </style>
 
-<form on:submit|preventDefault={handleSubmit} class="col" in:fade out:fade>
+<form
+  on:submit|preventDefault={handleSubmit}
+  class="col"
+  in:fade={{ delay: 150 }}
+>
   <div class="groups">
     <Label small>Edit description</Label>
     <input type="text" name="description" />
   </div>
-  <Button small type="submit"><CheckIcon size="1x" /> Submit</Button>
+  <div class="buttonContainer">
+    <Button small type="submit"><CheckIcon size="1x" /> Submit</Button>
+  </div>
 </form>

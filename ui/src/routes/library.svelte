@@ -10,7 +10,7 @@
 
 <style lang="scss">
   hr {
-    color: var(--accent-color);
+    color: var(--muted-grey);
   }
   section {
     width: 100%;
@@ -22,10 +22,18 @@
       text-align: center;
     }
   }
+  h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+  }
 </style>
 
 <svelte:head>
   <title>Library</title>
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:400,600,700"
+    rel="stylesheet"
+  />
 </svelte:head>
 
 <section>
@@ -38,7 +46,7 @@
     </div>
   {:then data}
     {#each data as item, i}
-      <Ledger.LedgerEntryComponent entry={item} {i} />
+      <Ledger.LedgerEntryComponent entry={item} {i} isMuted={false} />
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>

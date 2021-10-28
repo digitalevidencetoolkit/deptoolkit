@@ -6,7 +6,7 @@ export type LedgerEntry = {
   url: string;
   sku: string;
   screenshot_hash?: string;
-  thumb_hash?: string;
+  thumb_hash: string;
   one_file_hash?: string;
   history?: QLDBHistory;
   description?: string;
