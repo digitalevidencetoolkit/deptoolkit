@@ -7,13 +7,13 @@
       "email": "niko@niko.io"
     }
   ],
-  "version": "0.10.2",
+  "version": "0.10.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/digitalevidencetoolkit/deptoolkit"
   },
   "engines": {
-    "node": ">=14.0"
+    "node": "^16"
   },
   "license": "gpl-3.0",
   "dependencies": {

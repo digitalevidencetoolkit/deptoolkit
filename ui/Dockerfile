@@ -1,4 +1,4 @@
-FROM node:14.16.1-alpine3.12 as builder
+FROM node:16.13.0-alpine3.14 as builder
 LABEL version="0.1"
 LABEL description="GUI from the QLDB ledger"
 
