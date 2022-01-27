@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { domainFromUrl, shortHash } from '$lib/helpers';
+  import { domainFromUrl, shortHash, shortenStringToLength } from '$lib/helpers';
   import {
     ExternalLinkIcon,
     KeyIcon,
@@ -8,6 +8,9 @@
   } from 'svelte-feather-icons';
   export let entry;
   const { title, url, sku, screenshot_hash, one_file_hash } = entry;
+
+  const pretty_domain = domainFromUrl(url);
+  const pretty_domain_short = `${ shortenStringToLength(pretty_domain, 18) }...`;
 </script>
 
 <style lang="scss">
@@ -34,7 +37,7 @@
 </style>
 
 <h4>{title}</h4>
-<pre><ExternalLinkIcon size="1x" /> <a href={url}>{domainFromUrl(url)}</a></pre>
+<pre><ExternalLinkIcon size="1x" /> <a href={url}>{pretty_domain_short}</a></pre>
 <div class="row">
   <!-- prettier-ignore -->
   <pre class="showHelp" title={sku}>

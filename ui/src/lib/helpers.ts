@@ -1,4 +1,14 @@
 /**
+ * shorten a string to a desired length
+ * @param str a string, ideally too long to your taste
+ * @param desiredLength a number, the length to which to cut the string
+ **/
+export const shortenStringToLength = (
+  str: string,
+  desiredLength: number
+): string => str.substring(0, desiredLength - 1);
+
+/**
  * from https://stackoverflow.com/questions/34818020/javascript-regex-url-extract-domain-only/34818545
  * @param url a string representing a URL
  * @return the TLD
