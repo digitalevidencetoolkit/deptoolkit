@@ -37,7 +37,7 @@
 </style>
 
 <h4>{title}</h4>
-<pre><ExternalLinkIcon size="1x" /> <a href={url}>{pretty_domain_short}</a></pre>
+<pre><ExternalLinkIcon size="1x" /> <a href={url}>{pretty_domain.length > 18 ? pretty_domain_short : pretty_domain}</a></pre>
 <div class="row">
   <!-- prettier-ignore -->
   <pre class="showHelp" title={sku}>
