@@ -9,5 +9,5 @@ try {
     console.log(chalk.green(`Connected successfully on port ${port} 🚀`));
   });
 } catch (error) {
-  console.error(chalk.red(`❌ Error occured: ${error.message}`));
+  console.error(chalk.red(`❌ Error occured: ${(error as Error).message}`));
 }
