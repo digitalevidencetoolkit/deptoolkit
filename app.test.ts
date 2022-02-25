@@ -16,7 +16,7 @@ describe('The file endpoint', () => {
     return supertest(app)
       .get('/file/foo')
       .then(response => {
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(500);
       });
   });
 
