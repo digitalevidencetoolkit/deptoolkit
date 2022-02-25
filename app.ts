@@ -13,6 +13,7 @@ import * as Store from './src/store';
 import * as Bundle from './src/types/Bundle';
 import * as Record from './src/types/Record';
 import * as Verify from './src/verify';
+import * as S3 from './src/s3';
 
 import { pprint, cleanupBase64 } from './src/helpers';
 
@@ -29,14 +30,26 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
+app.get('/file/:sku', async (req: Request, res: Response) => {
   const { sku } = req.params;
-  const options = {
-    root: outDir,
-    dotfiles: 'deny',
-  };
-  res.sendFile(`${sku}`, options);
+  const result = S3.getFileByKey(sku);
+  console.log(chalk.bold(`GET /file/${sku}`));
+  result.on('error', err => {
+    const { name } = err;
+    res.status(500).send(`Error getting file: S3 ${name}`);
+  });
+  result.pipe(res);
 });
+
+// @TODO: deprecate?
+// app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
+//   const { sku } = req.params;
+//   const options = {
+//     root: outDir,
+//     dotfiles: 'deny',
+//   };
+//   res.sendFile(`${sku}`, options);
+// });
 
 app.get(
   '/history/:sku',
