@@ -36,7 +36,10 @@ describe('writeOne', () => {
       { kind: 'screenshot', data: 'foobar' },
     ];
 
-    const bundle = await Store.newBundle(newBundle, { directory: outDir });
+    const bundle = await Store.newBundle(newBundle, {
+      type: 'local',
+      directory: outDir,
+    });
 
     expect(bundle.length).toBe(2);
     await Promise.all(
@@ -54,7 +57,10 @@ describe('writeOne', () => {
       { kind: 'screenshot', data: 'foobar' },
     ];
 
-    const bundle = await Store.newBundle(newBundle, { directory: nestedDir });
+    const bundle = await Store.newBundle(newBundle, {
+      type: 'local',
+      directory: nestedDir,
+    });
 
     expect(bundle.length).toBe(2);
     await Promise.all(
@@ -74,9 +80,18 @@ describe('writeOne', () => {
       { kind: 'screenshot', data: 'souce' },
     ];
 
-    const bundle1 = await Store.newBundle(newBundle1, { directory: outDir });
-    const bundle2 = await Store.newBundle(newBundle2, { directory: outDir });
-    const bundle3 = await Store.newBundle(newBundle1, { directory: outDir });
+    const bundle1 = await Store.newBundle(newBundle1, {
+      type: 'local',
+      directory: outDir,
+    });
+    const bundle2 = await Store.newBundle(newBundle2, {
+      type: 'local',
+      directory: outDir,
+    });
+    const bundle3 = await Store.newBundle(newBundle1, {
+      type: 'local',
+      directory: outDir,
+    });
 
     expect(bundle1[0]).toEqual(bundle2[0]);
     expect(bundle1).toEqual(bundle3);

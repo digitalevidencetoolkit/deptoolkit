@@ -1,4 +1,5 @@
 import archiver from 'archiver';
+import { Response } from 'express';
 import * as fs from 'fs';
 import * as fsp from 'fs/promises';
 import * as path from 'path';
@@ -6,11 +7,13 @@ import { makeHash, pprint } from '../helpers';
 import * as File from '../types/File';
 import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
+import * as S3 from '../s3';
 // import * as s3storage from s3storage
 
 type WriteConfiguration = {
+  type: 'local' | 'S3';
   directory: string;
-  // s3: ...
+  bucket?: string;
 };
 
 /**
@@ -184,6 +187,33 @@ export const makeZip = (
       .pipe(stream);
     zip.finalize();
   });
+};
+
+/**
+ * Handles how to access a file depending on its source, i.e. dispatch between
+ * the file system or an S3 bucket (and hopefully more to come)
+ * @returns a Response containing the file
+ */
+export const getFile = (
+  id: string,
+  source: WriteConfiguration['type'],
+  res: Response
+) => {
+  if (source === 'local') {
+    const outDir = path.join(__dirname, './../../out');
+    const options = {
+      root: outDir,
+      dotfiles: 'deny',
+    };
+    res.sendFile(`${id}`, options);
+  } else if (source === 'S3') {
+    const result = S3.getFileByKey(id);
+    result.on('error', err => {
+      const { name } = err;
+      res.status(500).send(`Error getting file: S3 ${name}`);
+    });
+    result.pipe(res);
+  }
 };
 
 /**

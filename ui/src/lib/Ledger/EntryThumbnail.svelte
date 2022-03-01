@@ -1,6 +1,7 @@
 <script lang="ts">
   export let url: string;
-  const pathToThumbnail = (path: string): string => `/api/file/${path}.png`;
+  const pathToThumbnail = (path: string): string =>
+    `/api/file/${path}.png?source=S3`;
 </script>
 
 <style lang="scss">

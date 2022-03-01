@@ -30,26 +30,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/file/:sku', async (req: Request, res: Response) => {
-  const { sku } = req.params;
-  const result = S3.getFileByKey(sku);
-  console.log(chalk.bold(`GET /file/${sku}`));
-  result.on('error', err => {
-    const { name } = err;
-    res.status(500).send(`Error getting file: S3 ${name}`);
-  });
-  result.pipe(res);
+app.get('/file/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { source } = <{ source: 'local' | 'S3' }>req.query;
+  return Store.getFile(id, source, res);
 });
-
-// @TODO: deprecate?
-// app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
-//   const { sku } = req.params;
-//   const options = {
-//     root: outDir,
-//     dotfiles: 'deny',
-//   };
-//   res.sendFile(`${sku}`, options);
-// });
 
 app.get(
   '/history/:sku',
@@ -119,6 +104,7 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       const onefile = { kind: 'one_file' as const, data: onefileData };
 
       await Store.newBundle([screenshot, thumbnail, onefile], {
+        type: 'local',
         directory: outDir,
       })
         .then((bundle: Bundle.Bundle) => {
