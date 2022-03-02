@@ -11,7 +11,7 @@ import * as S3 from '../s3';
 // import * as s3storage from s3storage
 
 type WriteConfiguration = {
-  type: 'local' | 'S3';
+  type: 'local' | 'S3' | undefined;
   directory: string;
   bucket?: string;
 };
@@ -199,7 +199,7 @@ export const getFile = (
   source: WriteConfiguration['type'],
   res: Response
 ) => {
-  if (source === 'local') {
+  if (source === 'local' || !source) {
     const outDir = path.join(__dirname, './../../out');
     const options = {
       root: outDir,
