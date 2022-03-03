@@ -39,14 +39,6 @@ const writeToDisk = async (
   await fsp.writeFile(path.join(directory, fileName), data);
 };
 
-const mock = () =>
-  new Promise(resolve =>
-    setTimeout(() => {
-      console.log('s3 it is, then');
-      return resolve;
-    }, 500)
-  );
-
 /**
  * Write the specified `newFile` to disk or the cloud, according to the specified
  * `configuration`.
@@ -63,19 +55,16 @@ const writeOne = async (
   configuration: WriteConfiguration
 ): Promise<File.File> => {
   const destination = sourceToFavour();
+  const { directory } = configuration;
   const { kind, data } = newFile;
-  const outDir = path.join(
-    __dirname,
-    `./../../${process.env.SOURCE_FILES_DIRECTORY}`
-  );
 
   const hash = makeHash(data);
   const result: File.File = { kind, hash };
 
   if (destination === 'directory') {
-    await writeToDisk(data, outDir, File.fileName(result));
+    await writeToDisk(data, directory, File.fileName(result));
   } else if (destination === 'bucket') {
-    await writeToDisk(data, outDir, File.fileName(result));
+    await writeToDisk(data, directory, File.fileName(result));
     await S3.writeFileInBucket(
       File.fileName(result),
       data,
