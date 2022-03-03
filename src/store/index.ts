@@ -39,8 +39,16 @@ const writeToDisk = async (
   await fsp.writeFile(path.join(directory, fileName), data);
 };
 
+const mock = () =>
+  new Promise(resolve =>
+    setTimeout(() => {
+      console.log('s3 it is, then');
+      return resolve;
+    }, 500)
+  );
+
 /**
- * Write the specified `newFile` to disk, according to the specified
+ * Write the specified `newFile` to disk or the cloud, according to the specified
  * `configuration`.
  *
  * If the same file is written twice, the old version is replaced silently.
@@ -54,13 +62,26 @@ const writeOne = async (
   newFile: File.NewFile,
   configuration: WriteConfiguration
 ): Promise<File.File> => {
-  const { directory } = configuration;
+  const destination = sourceToFavour();
   const { kind, data } = newFile;
+  const outDir = path.join(
+    __dirname,
+    `./../../${process.env.SOURCE_FILES_DIRECTORY}`
+  );
 
   const hash = makeHash(data);
   const result: File.File = { kind, hash };
 
-  await writeToDisk(data, directory, File.fileName(result));
+  if (destination === 'directory') {
+    await writeToDisk(data, outDir, File.fileName(result));
+  } else if (destination === 'bucket') {
+    await writeToDisk(data, outDir, File.fileName(result));
+    await S3.writeFileInBucket(
+      File.fileName(result),
+      data,
+      process.env.SOURCE_FILES_BUCKET as string
+    );
+  }
 
   return result;
 };
