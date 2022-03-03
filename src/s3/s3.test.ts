@@ -4,7 +4,13 @@
 import * as S3 from './index';
 import { PassThrough } from 'stream';
 
-describe('S3 client', () => {
+describe('uploading files to S3', () => {
+  it('should be able to upload an object', async () => {
+    //
+  });
+});
+
+describe('finding files on S3', () => {
   it('should find a known object', async () => {
     const key =
       'a8eab0456eb979653a3c1ca77c37239100ef7300c9026db868ad9dc57f5aa580.png';

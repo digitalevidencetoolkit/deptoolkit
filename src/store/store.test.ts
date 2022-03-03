@@ -11,7 +11,7 @@ import * as File from '../types/File';
 
 import * as Store from './index';
 
-describe('writeOne', () => {
+describe('write a file locally', () => {
   let outDir = '';
   config();
   const old_env = process.env;
@@ -107,6 +107,10 @@ describe('writeOne', () => {
     expect(bundle1[0]).toEqual(bundle2[0]);
     expect(bundle1).toEqual(bundle3);
   });
+});
+
+describe('write a file to S3', () => {
+  // or maybe test in src/s3 directly
 });
 
 describe('generateAboutString', () => {
