@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as fsp from 'fs/promises';
 import * as path from 'path';
 import Zip from 'node-stream-zip';
+import { config } from 'dotenv';
 
 import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
@@ -275,5 +276,42 @@ describe('makeZip', () => {
       .catch(() => {
         // this is the expected behavior
       });
+  });
+});
+
+describe('sourceToFavour', () => {
+  config();
+  const old_env = process.env;
+
+  beforeEach(() => {
+    jest.resetModules();
+    process.env = { ...old_env };
+  });
+  afterAll(() => {
+    process.env = old_env;
+  });
+
+  it('should return a value based on env', () => {
+    process.env.SOURCE_FILES_DIRECTORY = 'out';
+    const source = Store.sourceToFavour();
+    expect(typeof source).toBe('string');
+  });
+  it('should be null if no config', () => {
+    process.env.SOURCE_FILES_DIRECTORY = '';
+    process.env.SOURCE_FILES_BUCKET = '';
+    const source = Store.sourceToFavour();
+    expect(source).toBe(null);
+  });
+  it('should favour bucket over local dir', () => {
+    process.env.SOURCE_FILES_DIRECTORY = 'dir';
+    process.env.SOURCE_FILES_BUCKET = 'bucket';
+    const source = Store.sourceToFavour();
+    expect(source).toBe('bucket');
+  });
+  it('should be dir if bucket is empty', () => {
+    process.env.SOURCE_FILES_DIRECTORY = 'dir';
+    process.env.SOURCE_FILES_BUCKET = '';
+    const source = Store.sourceToFavour();
+    expect(source).toBe('directory');
   });
 });

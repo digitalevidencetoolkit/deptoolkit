@@ -8,11 +8,13 @@ describe('S3 client', () => {
   it('should find a known object', async () => {
     const key =
       'a8eab0456eb979653a3c1ca77c37239100ef7300c9026db868ad9dc57f5aa580.png';
-    expect(S3.getFileByKey(key)).toBeInstanceOf(PassThrough);
+    expect(S3.getFileByKey(key, 'deptoolkit-public')).toBeInstanceOf(
+      PassThrough
+    );
   });
   it('should error on an unknown object', async () => {
     const key = 'foo.png';
-    const r = S3.getFileByKey(key);
+    const r = S3.getFileByKey(key, 'deptoolkit-public');
     r.on('error', e => expect(e).toBeInstanceOf(Error));
   });
 });

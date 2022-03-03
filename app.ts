@@ -32,8 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/file/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { source } = <{ source: 'local' | 'S3' }>req.query;
-  return Store.getFile(id, source, res);
+  return Store.getFile(id, res);
 });
 
 app.get(

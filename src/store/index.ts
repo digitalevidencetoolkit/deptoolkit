@@ -1,5 +1,6 @@
 import archiver from 'archiver';
 import { Response } from 'express';
+import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as fsp from 'fs/promises';
 import * as path from 'path';
@@ -9,6 +10,9 @@ import * as Bundle from '../types/Bundle';
 import * as Record from '../types/Record';
 import * as S3 from '../s3';
 // import * as s3storage from s3storage
+
+// set up .env variables as environment variables
+config();
 
 type WriteConfiguration = {
   type: 'local' | 'S3' | undefined;
@@ -194,25 +198,49 @@ export const makeZip = (
  * the file system or an S3 bucket (and hopefully more to come)
  * @returns a Response containing the file
  */
-export const getFile = (
-  id: string,
-  source: WriteConfiguration['type'],
-  res: Response
-) => {
-  if (source === 'local' || !source) {
-    const outDir = path.join(__dirname, './../../out');
+export const getFile = (id: string, res: Response) => {
+  const source = sourceToFavour();
+  if (source === 'directory') {
+    const outDir = path.join(
+      __dirname,
+      `./../../${process.env.SOURCE_FILES_DIRECTORY}`
+    );
     const options = {
       root: outDir,
       dotfiles: 'deny',
     };
     res.sendFile(`${id}`, options);
-  } else if (source === 'S3') {
-    const result = S3.getFileByKey(id);
+  } else if (source === 'bucket') {
+    const result = S3.getFileByKey(
+      id,
+      process.env.SOURCE_FILES_BUCKET as string
+    );
     result.on('error', err => {
       const { name } = err;
       res.status(500).send(`Error getting file: S3 ${name}`);
     });
     result.pipe(res);
+  }
+};
+
+/**
+ * Handles dispatch between local and cloud resources.
+ * If a bucket name is present in the config, then this
+ * data source will be preferred over local directory.
+ * @returns a string: 'bucket' or 'directory'
+ */
+export const sourceToFavour = (): 'bucket' | 'directory' | null => {
+  const hasBucket =
+    process.env.SOURCE_FILES_BUCKET && process.env.SOURCE_FILES_BUCKET != '';
+  const hasDirectory =
+    process.env.SOURCE_FILES_DIRECTORY &&
+    process.env.SOURCE_FILES_DIRECTORY != '';
+  if (hasBucket === true) {
+    return 'bucket';
+  } else if (hasDirectory === true) {
+    return 'directory';
+  } else {
+    return null;
   }
 };
 

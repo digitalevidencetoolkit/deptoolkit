@@ -14,9 +14,9 @@ import app from './app';
 describe('The file endpoint', () => {
   it('should 404 if the file doesnt exist.', () => {
     return supertest(app)
-      .get('/file/foo?source=local')
+      .get('/file/foo')
       .then(response => {
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(500);
       });
   });
 
