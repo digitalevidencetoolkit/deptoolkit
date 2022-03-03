@@ -13,7 +13,6 @@ import * as Store from './src/store';
 import * as Bundle from './src/types/Bundle';
 import * as Record from './src/types/Record';
 import * as Verify from './src/verify';
-import * as S3 from './src/s3';
 
 import { pprint, cleanupBase64 } from './src/helpers';
 

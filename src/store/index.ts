@@ -211,7 +211,7 @@ export const getFile = (id: string, res: Response) => {
     };
     res.sendFile(`${id}`, options);
   } else if (source === 'bucket') {
-    const result = S3.getFileByKey(
+    const result = S3.getFileInBucket(
       id,
       process.env.SOURCE_FILES_BUCKET as string
     );
