@@ -29,13 +29,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/file/:sku', async (req: Request, res: Response): Promise<void> => {
-  const { sku } = req.params;
-  const options = {
-    root: outDir,
-    dotfiles: 'deny',
-  };
-  res.sendFile(`${sku}`, options);
+app.get('/file/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  return Store.getFile(id, res);
 });
 
 app.get(
@@ -106,6 +102,7 @@ app.post('/form', async (req: Request, res: Response): Promise<Response> => {
       const onefile = { kind: 'one_file' as const, data: onefileData };
 
       await Store.newBundle([screenshot, thumbnail, onefile], {
+        type: 'local',
         directory: outDir,
       })
         .then((bundle: Bundle.Bundle) => {
