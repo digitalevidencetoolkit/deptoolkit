@@ -2,6 +2,10 @@
 
 _(Or **DEPToolkit** for short. Bit of a mouthful otherwise)_
 
+<div style="width:100%; display: flex; justify-content: center">
+<img style="width: 70%" src="https://digitalevidencetoolkit.org/images/illustrations/architecture-full-curves.svg">
+</div>
+
 A proof-of-concept software for researchers and small teams sifting through online material. With only one click of the mouse, the material will be **archived in a framework demonstrating chain of custody and stored durably**. Once included in the growing database, users will be able to go back to search through and **annotate the material**, and to **export working copies** of said material for publication and dissemination.
 
 A database built thusly can be handed to a prosecutor ten years down the line, and they will be able to say with mathematical certainty: “the material in this archive is identical and contemporary to the one saved at the time, ten years ago.”
