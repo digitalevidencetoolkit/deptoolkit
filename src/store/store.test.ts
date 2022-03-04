@@ -11,13 +11,23 @@ import * as File from '../types/File';
 
 import * as Store from './index';
 
-describe('writeOne', () => {
+describe('write a file locally', () => {
   let outDir = '';
+  config();
+  const old_env = process.env;
+
   beforeEach(() => {
+    //jest.resetModules();
+    process.env = { ...old_env };
+    process.env.SOURCE_FILES_DIRECTORY = 'out';
+    process.env.SOURCE_FILES_BUCKET = '';
     outDir = fs.mkdtempSync('out-');
   });
   afterEach(() => {
     fs.rmSync(outDir, { recursive: true, force: true });
+  });
+  afterAll(() => {
+    process.env = old_env;
   });
 
   const validateFile = async (
@@ -97,6 +107,10 @@ describe('writeOne', () => {
     expect(bundle1[0]).toEqual(bundle2[0]);
     expect(bundle1).toEqual(bundle3);
   });
+});
+
+describe('write a file to S3', () => {
+  // or maybe test in src/s3 directly
 });
 
 describe('generateAboutString', () => {

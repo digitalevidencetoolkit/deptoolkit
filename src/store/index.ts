@@ -40,7 +40,7 @@ const writeToDisk = async (
 };
 
 /**
- * Write the specified `newFile` to disk, according to the specified
+ * Write the specified `newFile` to disk or the cloud, according to the specified
  * `configuration`.
  *
  * If the same file is written twice, the old version is replaced silently.
@@ -54,13 +54,23 @@ const writeOne = async (
   newFile: File.NewFile,
   configuration: WriteConfiguration
 ): Promise<File.File> => {
+  const destination = sourceToFavour();
   const { directory } = configuration;
   const { kind, data } = newFile;
 
   const hash = makeHash(data);
   const result: File.File = { kind, hash };
 
-  await writeToDisk(data, directory, File.fileName(result));
+  if (destination === 'directory') {
+    await writeToDisk(data, directory, File.fileName(result));
+  } else if (destination === 'bucket') {
+    await writeToDisk(data, directory, File.fileName(result));
+    await S3.writeFileInBucket(
+      File.fileName(result),
+      data,
+      process.env.SOURCE_FILES_BUCKET as string
+    );
+  }
 
   return result;
 };
