@@ -7,7 +7,7 @@
     "watch": "webpack -w"
   },
   "devDependencies": {
-    "webpack": "2.3.2",
+    "webpack": "5.74.0",
     "webpack-webext-plugin": "github:rpl/webpack-webext-plugin"
   },
   "dependencies": {
