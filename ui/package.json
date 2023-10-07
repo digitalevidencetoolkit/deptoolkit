@@ -17,7 +17,7 @@
     "@sveltejs/kit": "next",
     "@types/cookie": "^0.4.0",
     "attractions": "^3.3.0",
-    "postcss": "^8.3.6",
+    "postcss": "^8.4.31",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
     "sass": "^1.37.5",
