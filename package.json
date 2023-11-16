@@ -29,7 +29,7 @@
     "ion-js": "^4.2.1",
     "jsbi": "^3.1.6",
     "node-fetch": "^3.1.1",
-    "sharp": "^0.30.5"
+    "sharp": "^0.32.6"
   },
   "scripts": {
     "start": "ts-node-dev ./index.ts",
