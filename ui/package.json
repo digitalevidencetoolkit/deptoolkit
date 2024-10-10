@@ -34,7 +34,7 @@
     "@fontsource/roboto": "^4.5.0",
     "@lukeed/uuid": "^2.0.0",
     "@types/d3-scale": "^4.0.1",
-    "cookie": "^0.4.1",
+    "cookie": "^0.7.0",
     "d3-scale": "^4.0.0",
     "d3-time": "^3.0.0",
     "d3-time-format": "^4.0.0"
