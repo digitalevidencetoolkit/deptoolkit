@@ -28,6 +28,6 @@ $ docker-compose up
 
 ### Help & Contact
 
-- [Getting started](https://digitalevidencetoolkit.notion.site/Getting-started-15521f4125534f4aa758a2575c27ad5c)
-- [Technical documentation](https://digitalevidencetoolkit.notion.site/The-Digital-Evidence-Preservation-Toolkit-71eca0486bed46878dc478248488d23f)
+- [Getting started](docs/getting_started.md)
+- [Technical documentation](docs/)
 - Email: basile at digitalevidencetoolkit dot org
