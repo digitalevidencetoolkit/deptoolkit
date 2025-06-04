@@ -132,13 +132,13 @@
     <ul>
       <li>
         <a
-          href="https://digitalevidencetoolkit.notion.site/Getting-started-15521f4125534f4aa758a2575c27ad5c"
+          href="https://github.com/digitalevidencetoolkit/deptoolkit/blob/main/docs/getting_started.md"
           >Getting started</a
         >
       </li>
       <li>
         <a
-          href="https://digitalevidencetoolkit.notion.site/Technical-Journal-01ad0720aebc4f9c9a8036da0fd7426b"
+          href="https://github.com/digitalevidencetoolkit/deptoolkit/blob/main/docs/README.md"
           >Full technical documentation</a
         >
       </li>

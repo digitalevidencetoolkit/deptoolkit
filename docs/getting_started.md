@@ -104,14 +104,14 @@ Namely, the Store (`src/store/index.ts`) will:
 
 ##### API and frontend
 
-The API should be available at [http://localhost:3000](https://github.com/digitalevidencetoolkit/deptoolkit/releases) — assert this by running:
+The API should be available at `http://localhost:3000` — assert this by running:
 
 ```bash
 $ curl http://localhost:3000/list-docs
 > [ {...}, {...} ]
 ```
 
-The UI should be available at http://localhost:8000 in your web browser of choice. API requests are proxied through the UI. Thus, the following queries are equivalent:
+The UI should be available at `http://localhost:8000` in your web browser of choice. API requests are proxied through the UI. Thus, the following queries are equivalent:
 
 ```bash
 $ curl http://localhost:3000/list-docs        // as before

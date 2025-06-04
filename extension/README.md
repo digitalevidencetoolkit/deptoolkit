@@ -3,8 +3,9 @@
 Browser extension used to trigger the archiving of a webpage, according to the (coming) Digital Evidence Toolkit's standard.
 
 ## Install
+
 ```sh
-$ npm install 
+$ npm install
 $ npm run watch
 ```
 
@@ -15,4 +16,5 @@ The Webpack task bundles dependencies and moves `popup/popup.js` and `content_sc
 Your changes will automatically reload.
 
 ## Usage
-Use while the [Digital Evidence Toolkit API](https://github.com/digitalevidencetoolkit/deptoolkit-node-api) is running in parallel.
+
+Use while the Node API is running in parallel.
