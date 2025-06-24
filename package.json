@@ -25,7 +25,7 @@
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "express": "^4.21.0",
-    "formidable": "^1.2.2",
+    "formidable": "^3.5.4",
     "ion-js": "^4.2.1",
     "jsbi": "^3.1.6",
     "node-fetch": "^3.1.1",
