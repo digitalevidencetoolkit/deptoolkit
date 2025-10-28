@@ -2,6 +2,8 @@
 
 _(Or **DEPToolkit** for short. Bit of a mouthful otherwise)_
 
+> **⚠️ CRITICAL NOTICE**: This toolkit relies on AWS QLDB, which was deprecated by AWS and will be discontinued on **July 31, 2025**. The toolkit will require migration to an alternative ledger database solution. See [docs/DEPRECATION.md](docs/DEPRECATION.md) for details and potential migration paths.
+
 <div style="width:100%; display: flex; justify-content: center">
 <img style="width: 70%" src="https://digitalevidencetoolkit.org/images/illustrations/architecture-full-curves.svg">
 </div>
