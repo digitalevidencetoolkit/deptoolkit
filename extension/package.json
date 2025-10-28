@@ -11,6 +11,6 @@
     "webpack-webext-plugin": "github:rpl/webpack-webext-plugin"
   },
   "dependencies": {
-    "form-data": "^4.0.0"
+    "form-data": "^4.0.4"
   }
 }
