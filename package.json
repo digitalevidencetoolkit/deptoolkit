@@ -18,7 +18,7 @@
   "license": "gpl-3.0",
   "dependencies": {
     "amazon-qldb-driver-nodejs": "^2.2.0",
-    "_comment": "WARNING: AWS QLDB is deprecated and will be discontinued on July 31, 2025. See docs/DEPRECATION.md for migration information.",
+    "_comment": "WARNING: AWS QLDB is deprecated and will be discontinued on July 31, 2025.",
     "aws-sdk": "^2.1354.0",
     "body-parser": "^1.20.3",
     "chalk": "^4.1.2",

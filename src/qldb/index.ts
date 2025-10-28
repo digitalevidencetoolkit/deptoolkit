@@ -4,8 +4,6 @@
  * AWS QLDB is being discontinued on July 31, 2025.
  * This entire module will need to be replaced with an alternative ledger solution.
  *
- * See docs/DEPRECATION.md for migration information and alternatives.
- *
  * @deprecated AWS QLDB service will be discontinued on July 31, 2025
  */
 

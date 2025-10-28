@@ -6,8 +6,6 @@
  * This module wraps AWS QLDB operations. Since QLDB is being discontinued on July 31, 2025,
  * this entire module will need to be refactored to work with an alternative ledger solution.
  *
- * See docs/DEPRECATION.md for migration information and alternatives.
- *
  * @deprecated Depends on AWS QLDB which will be discontinued on July 31, 2025
  */
 

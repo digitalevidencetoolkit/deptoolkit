@@ -11,7 +11,7 @@ If the instructions in this guide feel a bit much, it's likely because the Toolk
 
 #### Setting up the ledger
 
-> **⚠️ AWS QLDB DEPRECATION WARNING**: AWS QLDB is being discontinued on **July 31, 2025**. While you can still create QLDB ledgers for testing/development purposes, this toolkit will require migration to an alternative solution before that date. **Production use is not recommended.** See [DEPRECATION.md](DEPRECATION.md) for more information.
+> **⚠️ AWS QLDB DEPRECATION WARNING**: AWS QLDB is being discontinued on **July 31, 2025**. While you can still create QLDB ledgers for testing/development purposes, this toolkit will require migration to an alternative solution before that date. **Production use is not recommended.**
 
 The Toolkit requires a working connection with Amazon Web Services, and thus that you have some kind of well-permissioned account or IAM role.
 
