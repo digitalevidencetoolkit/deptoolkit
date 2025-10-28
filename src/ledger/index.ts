@@ -1,3 +1,14 @@
+/**
+ * Ledger abstraction layer
+ *
+ * ⚠️ WARNING: AWS QLDB DEPRECATION NOTICE
+ *
+ * This module wraps AWS QLDB operations. Since QLDB is being discontinued on July 31, 2025,
+ * this entire module will need to be refactored to work with an alternative ledger solution.
+ *
+ * @deprecated Depends on AWS QLDB which will be discontinued on July 31, 2025
+ */
+
 import * as Record from '../types/Record';
 import * as Annotations from '../types/Annotations';
 import type { Annotation } from '../types/Annotations';

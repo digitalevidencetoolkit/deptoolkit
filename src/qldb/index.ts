@@ -1,3 +1,12 @@
+/**
+ * ⚠️ WARNING: AWS QLDB DEPRECATION NOTICE
+ *
+ * AWS QLDB is being discontinued on July 31, 2025.
+ * This entire module will need to be replaced with an alternative ledger solution.
+ *
+ * @deprecated AWS QLDB service will be discontinued on July 31, 2025
+ */
+
 import {
   QldbDriver,
   Result,
